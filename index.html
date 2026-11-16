@@ -369,6 +369,18 @@ body{top:0!important}
 .front[data-system="runes"] strong{color:#e4d5b5!important;font-family:Georgia,"Noto Serif TC",serif!important;letter-spacing:1.5px!important}
 .front[data-system="runes"] small{color:#b7a889!important}
 
+/* Refined finish for the three distinct decks */
+.front[data-system="tarot"] .card-art{border:1px solid rgba(235,207,151,.82)!important;box-shadow:inset 0 0 28px rgba(12,8,5,.48),0 2px 10px rgba(25,14,8,.35)!important}
+.front[data-system="tarot"] .card-art svg{filter:saturate(1.2) contrast(1.12) sepia(.12)}
+.front[data-system="tarot"]{background:linear-gradient(135deg,#ead8b3 0%,#b89461 42%,#e5c99a 100%)!important}
+.front[data-system="lenormand"] .card-art{border:2px solid #c7a36c!important;box-shadow:inset 0 0 22px rgba(93,67,42,.18),0 2px 8px rgba(93,67,42,.18)!important}
+.front[data-system="lenormand"] .card-art svg{filter:saturate(1.2) contrast(1.06)}
+.front[data-system="lenormand"]{background:linear-gradient(145deg,#fff8e8,#ead7b5 55%,#f8edda)!important}
+.front[data-system="runes"]{background:linear-gradient(145deg,#17130e,#050505 55%,#21190d)!important;border-color:#bd9446!important;box-shadow:inset 0 0 0 2px rgba(229,187,91,.25),inset 0 0 30px rgba(0,0,0,.8),0 12px 28px rgba(0,0,0,.42)!important}
+.front[data-system="runes"] .card-art{filter:drop-shadow(0 0 7px rgba(220,174,73,.2))}
+.front[data-system="runes"] strong{color:#f2cf79!important;text-shadow:0 0 9px rgba(218,171,70,.35)!important}
+
+
 </style>
 </head>
 <body>
@@ -501,7 +513,7 @@ function cardArtwork(c,index){
  const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
  if(system==="runes"){
   const rune=esc(c.symbol||"ᚠ");
-  return '<svg viewBox="0 0 120 150" role="img" aria-label="'+esc(c.name)+' 符文" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'stone" x2="1" y2="1"><stop stop-color="#71675a"/><stop offset=".5" stop-color="#39352f"/><stop offset="1" stop-color="#201f1c"/></linearGradient><filter id="'+uid+'rough"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="2"/><feColorMatrix values="0 0 0 0 .6 0 0 0 0 .55 0 0 0 0 .45 0 0 0 .18 0"/></filter></defs><rect x="5" y="5" width="110" height="140" rx="5" fill="url(#'+uid+'stone)"/><rect x="9" y="9" width="102" height="132" rx="3" fill="none" stroke="#a99b7d" stroke-opacity=".55"/><path d="M17 24L27 15M93 135l10-10M18 127l8 8M96 17l8 8" stroke="#b4a78a" stroke-opacity=".35" stroke-width="2"/><rect x="5" y="5" width="110" height="140" filter="url(#'+uid+'rough)" opacity=".45"/><path d="M60 29V119" stroke="#d9c9a4" stroke-width="1" opacity=".28"/><text x="60" y="91" text-anchor="middle" font-family="serif" font-size="68" fill="#e8d9b9" stroke="#8e8065" stroke-width=".7" paint-order="stroke">'+rune+'</text><path d="M34 120H86" stroke="#b5a583" stroke-opacity=".6"/><text x="60" y="133" text-anchor="middle" font-family="Georgia,serif" font-size="7" letter-spacing="2" fill="#c6b895">'+esc(c.name.toUpperCase())+'</text></svg>';
+  return '<svg viewBox="0 0 120 150" role="img" aria-label="'+esc(c.name)+' 符文" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'stone" x2="1" y2="1"><stop stop-color="#171411"/><stop offset=".5" stop-color="#090807"/><stop offset="1" stop-color="#030303"/></linearGradient><filter id="'+uid+'rough"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="2"/><feColorMatrix values="0 0 0 0 .6 0 0 0 0 .55 0 0 0 0 .45 0 0 0 .18 0"/></filter></defs><rect x="5" y="5" width="110" height="140" rx="5" fill="url(#'+uid+'stone)"/><rect x="9" y="9" width="102" height="132" rx="3" fill="none" stroke="#9b783b" stroke-opacity=".55"/><path d="M17 24L27 15M93 135l10-10M18 127l8 8M96 17l8 8" stroke="#a98742" stroke-opacity=".35" stroke-width="2"/><rect x="5" y="5" width="110" height="140" filter="url(#'+uid+'rough)" opacity=".45"/><path d="M60 29V119" stroke="#d4aa52" stroke-width="1" opacity=".28"/><text x="60" y="91" text-anchor="middle" font-family="serif" font-size="68" fill="#f1cc70" stroke="#8d6828" stroke-width=".7" paint-order="stroke">'+rune+'</text><path d="M34 120H86" stroke="#b58a3a" stroke-opacity=".6"/><text x="60" y="133" text-anchor="middle" font-family="Georgia,serif" font-size="7" letter-spacing="2" fill="#e0b95d">'+esc(c.name.toUpperCase())+'</text></svg>';
  }
  if(system==="lenormand"){
   const pastel=[["#d9e7d6","#769b83","#f6e8c7"],["#f0d6cf","#b77d78","#fff0d6"],["#d9e1f0","#7989b0","#f7e7c6"],["#f1e3b9","#c39b59","#fff4d8"],["#d8e9e8","#719e9a","#f8ead4"]];
@@ -544,7 +556,7 @@ function cardArtwork(c,index){
    "十字架":'<path d="M60 33v78M37 59h46" stroke="#8a705c" stroke-width="13" stroke-linecap="round"/><path d="M60 33v78M37 59h46" stroke="#d8c19a" stroke-width="2"/>'
   };
   const art=symbols[c.name]||'<circle cx="60" cy="75" r="29" fill="#e6d6ad" stroke="#b88d5a" stroke-width="3"/><path d="M60 55v40m-18-20h36" stroke="#b88d5a" stroke-width="3"/>';
-  return '<svg viewBox="0 0 120 150" role="img" aria-label="'+esc(c.name)+' 童話插畫" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'sky" x2="0" y2="1"><stop stop-color="'+p[0]+'"/><stop offset="1" stop-color="'+p[2]+'"/></linearGradient></defs><rect x="4" y="4" width="112" height="142" rx="9" fill="url(#'+uid+'sky)"/><path d="M8 107q25-24 52-5t52-2v42H8Z" fill="'+p[1]+'" opacity=".45"/><circle cx="93" cy="25" r="10" fill="#fff3d7" opacity=".8"/><g fill="#fff5dc" opacity=".9"><path d="M22 25l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z"/><path d="M91 59l2 4 4 2-4 2-2 4-2-4-4-2 4-2Z"/><circle cx="35" cy="42" r="1.5"/></g>'+art+'<rect x="8" y="8" width="104" height="134" rx="7" fill="none" stroke="#fff1d3" stroke-width="2"/><path d="M13 15q8 8 0 16m94-16q-8 8 0 16M13 135q8-8 0-16m94 16q-8-8 0-16" fill="none" stroke="'+p[1]+'" stroke-width="2"/></svg>';
+  return '<svg viewBox="0 0 120 150" role="img" aria-label="'+esc(c.name)+' 童話插畫" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'sky" x2="0" y2="1"><stop stop-color="'+p[0]+'"/><stop offset="1" stop-color="'+p[2]+'"/></linearGradient></defs><rect x="4" y="4" width="112" height="142" rx="9" fill="url(#'+uid+'sky)"/><path d="M8 107q25-24 52-5t52-2v42H8Z" fill="'+p[1]+'" opacity=".45"/><circle cx="93" cy="25" r="10" fill="#fff3d7" opacity=".8"/><g fill="#fff5dc" opacity=".9"><path d="M22 25l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z"/><path d="M91 59l2 4 4 2-4 2-2 4-2-4-4-2 4-2Z"/><circle cx="35" cy="42" r="1.5"/></g>'+art+'<g fill="none" stroke="#fff5df" stroke-opacity=".75" stroke-width="1"><path d="M13 31Q27 18 41 31T69 31 97 31M13 120q14-13 28 0t28 0 28 0"/><circle cx="60" cy="75" r="47" stroke-dasharray="2 4"/><path d="M60 16l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z"/></g><rect x="8" y="8" width="104" height="134" rx="7" fill="none" stroke="#fff1d3" stroke-width="2"/><path d="M13 15q8 8 0 16m94-16q-8 8 0 16M13 135q8-8 0-16m94 16q-8-8 0-16" fill="none" stroke="'+p[1]+'" stroke-width="2"/></svg>';
  }
  const palette=[["#b7a17e","#5b493c","#253b36","#e5d3ad"],["#9c9cae","#51475f","#283847","#e8d9c1"],["#c4a16f","#80513f","#3d4b39","#ead8b5"],["#a8b8b1","#536d68","#293d42","#e9d9bc"]];
  const p=palette[hash%palette.length];
