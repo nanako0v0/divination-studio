@@ -219,6 +219,17 @@ input,select,.prompt{
 }
 
 
+.question-presets{margin:-3px 0 18px}
+.preset-label{font-size:11px;letter-spacing:2px;color:var(--muted);margin:0 0 9px}
+.preset-categories,.preset-questions{display:flex;flex-wrap:wrap;gap:8px}
+.preset-category,.preset-question{border:1px solid rgba(255,241,181,.25);border-radius:999px;color:var(--light);background:linear-gradient(135deg,rgba(193,219,232,.10),rgba(255,241,181,.055),rgba(35,24,22,.34));box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 10px rgba(10,5,4,.12);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .2s,border-color .2s,box-shadow .2s}
+.preset-category{padding:8px 14px;font-size:12px}
+.preset-category.active{color:var(--gold);border-color:rgba(255,241,181,.68);background:linear-gradient(135deg,rgba(255,241,181,.19),rgba(193,219,232,.12),rgba(35,24,22,.38));box-shadow:0 0 14px rgba(255,241,181,.10),inset 0 1px 0 rgba(255,255,255,.18)}
+.preset-subtitle{margin-top:15px}
+.preset-question{padding:8px 12px;font-size:11px;line-height:1.5;text-align:left;border-radius:10px}
+.preset-category:hover,.preset-question:hover{border-color:rgba(255,241,181,.62);box-shadow:0 0 14px rgba(193,219,232,.12)}
+@media(max-width:520px){.preset-categories,.preset-questions{gap:7px}.preset-category{padding:8px 12px}.preset-question{font-size:11px}}
+
 .history-trigger{display:block;width:100%;margin:14px 0 0;padding:12px 16px;border:1px solid rgba(255,241,181,.34);border-radius:14px;background:linear-gradient(135deg,rgba(193,219,232,.13),rgba(255,241,181,.07),rgba(45,31,29,.38));color:var(--gold);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 22px rgba(10,5,4,.2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);cursor:pointer}
 .history-trigger:hover,.history-tab:hover{border-color:rgba(255,241,181,.7);box-shadow:0 0 18px rgba(193,219,232,.13)}
 #historyOpen::before,#historyOpen::after{content:none!important;display:none!important}
@@ -272,6 +283,12 @@ header h1{
 </div>
 <div class="heading">02 / 設定你的占卜</div>
 <div class="field"><label for="question">占卜問題（選填）</label><input id="question" maxlength="300" placeholder="例如：我與他的關係接下來會如何發展？"></div>
+<div class="question-presets">
+ <div class="preset-label">選擇問題類型</div>
+ <div class="preset-categories" id="presetCategories"></div>
+ <div class="preset-label preset-subtitle">選擇一個預設問題，或自行輸入</div>
+ <div class="preset-questions" id="presetQuestions"></div>
+</div>
 <div class="grid"><div class="field"><label for="spread">選擇牌陣</label><select id="spread"></select></div><div class="field"><label for="count">抽取數量</label><select id="count"></select></div></div>
 <label class="toggle"><input type="checkbox" id="reversals" checked> 允許出現逆位</label>
 <button class="primary" id="draw">✧ 開始占卜 ✧</button>
@@ -316,6 +333,29 @@ runes:[["單符文",1],["三符文牌陣",3],["五符文牌陣",5],["九符文�
 const positions={1:["核心指引"],3:["過去","現在","未來"],5:["核心","阻礙","影響","建議","發展"],7:["現況","你的狀態","對方狀態","關係核心","隱藏因素","建議","發展"],9:["左上","上方","右上","左側","中心","右側","左下","下方","右下"],10:["現況","挑戰","根基","過去","可能結果","近期","你的狀態","外在環境","希望與恐懼","最終結果"],12:Array.from({length:12},(_,i)=>"第"+(i+1)+"個月"),36:Array.from({length:36},(_,i)=>"第"+(i+1)+"張")};
 let system="tarot",lastDraw=[];
 const $=id=>document.getElementById(id);
+const presetData={
+ "感情":["我跟這個人未來有機會在一起嗎？","我們目前的關係會如何發展？","我跟前任有機會復合嗎？","對方現在對我的真實想法與感受是什麼？","這段感情值得我繼續投入嗎？","我們之間目前最大的阻礙是什麼？"],
+ "運勢":["我近期整體運勢如何？","接下來一個月需要特別注意什麼？","未來三個月會出現什麼重要轉變？","我目前最需要把握的機會是什麼？","最近阻礙我前進的因素是什麼？","接下來這段時間適合主動出擊還是先觀望？"],
+ "職業":["我適合目前這份工作嗎？","我近期有機會找到更適合的工作嗎？","現在適合轉職或換跑道嗎？","我在目前職場的發展前景如何？","我該選擇哪一個職涯方向？","接下來三個月的工作發展如何？"],
+ "未來":["未來三個月我的生活會有什麼變化？","我接下來最可能迎來什麼重要轉折？","目前這個選擇會把我帶往什麼方向？","半年後的我可能處於什麼狀態？","我正在走的道路適合我嗎？","未來有什麼值得我提前準備的事？"],
+ "財運":["我近期的財運與金錢流動如何？","接下來三個月有增加收入的機會嗎？","我目前的理財方向適合繼續嗎？","近期需要注意哪些金錢風險？","我適合嘗試新的收入來源嗎？","目前阻礙我累積財富的因素是什麼？"],
+ "人際":["某個人目前是怎麼看待我的？","我和這位朋友的關係接下來會如何變化？","我身邊的人際關係有哪些需要留意的地方？","這段友情值得我繼續維持嗎？","我該如何改善目前的人際困境？","對方對我的態度是真誠還是有所保留？"],
+ "意見提供":["面對目前的困境，我最適合採取什麼行動？","這件事情我應該繼續堅持還是放下？","我現在忽略了什麼重要訊息？","如果想讓現況變好，我可以先做哪一步？","我該如何在兩個選擇之間做決定？","此刻我最需要給自己的提醒是什麼？"]
+};
+function renderPresetQuestions(category){
+ $("presetCategories").innerHTML="";
+ Object.keys(presetData).forEach(name=>{
+  const b=document.createElement("button");b.type="button";b.className="preset-category"+(name===category?" active":"");b.textContent=name;
+  b.addEventListener("click",()=>renderPresetQuestions(name));
+  $("presetCategories").append(b);
+ });
+ $("presetQuestions").innerHTML="";
+ presetData[category].forEach(question=>{
+  const b=document.createElement("button");b.type="button";b.className="preset-question";b.textContent=question;
+  b.addEventListener("click",()=>{$("question").value=question;$("question").focus();});
+  $("presetQuestions").append(b);
+ });
+}
 
 const historyData={
  tarot:`<h3>起源：最初不是占卜牌</h3><p>塔羅牌的可考歷史通常追溯至15世紀的義大利北部。早期塔羅牌是供人遊戲的紙牌，當時常稱為「trionfi」，後來逐漸形成今日熟悉的塔羅牌系統。它最初並不是為了預測命運而設計。</p><h3>從紙牌遊戲到神秘學</h3><p>18世紀末，歐洲部分作者開始將塔羅牌連結到古埃及、神秘知識與占卜。這些說法深刻影響後世塔羅文化，但不少古老起源論並沒有可靠史料支持。19至20世紀的神秘學團體進一步建立象徵系統；1909年出版的 Rider–Waite–Smith 牌組，尤其影響現代常見的圖像與解牌方式。</p><h3>今日的塔羅</h3><p>現代塔羅同時被用於牌卡遊戲、藝術創作、靈性實踐與自我反思。不同牌組和流派可能採用不同象徵，不存在所有人都必須遵循的唯一解法。</p><div class="history-note">歷史提醒：塔羅作為紙牌的15世紀起源，與後來的占卜用途是不同階段，請勿把後世神秘學傳說當成已證實的中世紀史實。</div><p>延伸資料：<a href="https://www.britannica.com/topic/tarot" target="_blank" rel="noopener">Encyclopaedia Britannica：Tarot</a> · <a href="https://www.metmuseum.org/" target="_blank" rel="noopener">The Metropolitan Museum of Art</a></p>`,
@@ -362,6 +402,7 @@ $("summary").textContent=$("spread").selectedOptions[0].textContent+" · "+new D
 }
 $("draw").addEventListener("click",draw);$("redraw").addEventListener("click",draw);
 $("copy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText($("prompt").textContent);$("copy").textContent="已複製！";}catch(e){let r=document.createElement("textarea");r.value=$("prompt").textContent;document.body.append(r);r.select();document.execCommand("copy");r.remove();$("copy").textContent="已複製！";}setTimeout(()=>$("copy").textContent="複製 AI 解牌提示詞",1800);});
+renderPresetQuestions("感情");
 setup();
 </script>
 </body>
