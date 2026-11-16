@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#43302E">
+<title>占卜工作室 | Divination Studio</title>
+<style>
+:root{--bg:#43302E;--panel:#43302E;--gold:#FFF1B5;--light:#C1DBE8;--text:#FFF1B5;--muted:#C1DBE8;--line:#735B57}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Songti TC","Noto Serif TC","STSong","SimSun",serif;font-weight:300}
+header{text-align:center;padding:38px 15px 27px;background:linear-gradient(180deg,#43302E,#43302E);border-bottom:1px solid var(--line)}
+.brand{font-weight:300;font-size:11px;letter-spacing:5px;color:var(--gold)}h1{font-family:Georgia,serif;font-size:34px;font-weight:400;letter-spacing:6px;margin:16px 0 8px}header p{font-weight:300;font-size:12px;letter-spacing:2px;color:var(--muted)}
+main{max-width:720px;margin:auto;padding:22px 16px 55px}.heading{color:var(--gold);font-size:12px;letter-spacing:3px;margin:28px 0 14px}
+.systems{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.system{background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--text);padding:17px 4px}.system.active{border-color:var(--gold);background:#43302E}.system b{display:block;font-size:25px;margin-bottom:9px;color:var(--light)}.system small{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}input,select{width:100%;padding:13px;background:var(--panel);border:1px solid var(--line);border-radius:9px;color:var(--text);font-size:14px}.field{margin-bottom:16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.toggle{display:flex;align-items:center;gap:8px;margin:12px 0 18px}.toggle input{width:auto;accent-color:var(--gold)}
+button{font:inherit;cursor:pointer} input,select{font-family:inherit;font-weight:300}.primary{width:100%;padding:15px;background:linear-gradient(120deg,#FFF1B5,#C1DBE8);border:0;border-radius:9px;color:#43302E;font-weight:bold;letter-spacing:3px}
+.panel{margin-top:23px;padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:13px}.hidden{display:none}.result-title{text-align:center;color:var(--light);letter-spacing:3px;font-weight:400}.summary{text-align:center;color:var(--muted);font-size:11px;line-height:1.8;margin:15px 0 22px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.card-wrap{text-align:center;min-width:0}.card{aspect-ratio:2/3;perspective:800px}.inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .8s}.card.flipped .inner{transform:rotateY(180deg)}
+.front,.back{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:7px;text-align:center}.back{background:radial-gradient(circle,#43302E,#43302E);color:#FFF1B5}.back span{font-size:36px}.back small{font-size:8px;letter-spacing:2px;margin-top:12px}.front{transform:rotateY(180deg);background:linear-gradient(145deg,#FFF1B5,#C1DBE8);color:#43302E}.front .symbol{font-size:35px;margin-bottom:12px}.front strong{font-size:12px;line-height:1.5}.front small{margin-top:9px;font-size:10px}.front.rev .symbol{transform:rotate(180deg)}.position{font-size:11px;color:var(--gold);margin:9px 0 5px}.meaning{font-size:10px;line-height:1.6;color:var(--muted)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}.secondary{padding:12px 6px;background:#43302E;border:1px solid var(--gold);border-radius:8px;color:var(--light);font-size:12px}.prompt{white-space:pre-wrap;overflow-wrap:anywhere;background:#43302E;padding:13px;border-radius:8px;border:1px solid var(--line);font-size:12px;line-height:1.8;color:#C1DBE8}
+.note{text-align:center;color:var(--muted);font-size:11px;line-height:1.9;margin:28px 0}footer{text-align:center;border-top:1px solid var(--line);padding:25px;color:#C1DBE8;font-size:10px;letter-spacing:3px}
+
+/* Warm atmospheric lighting */
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse at 12% 8%, rgba(193,219,232,.11) 0%, transparent 34%),
+    radial-gradient(ellipse at 88% 24%, rgba(255,241,181,.12) 0%, transparent 30%),
+    radial-gradient(ellipse at 50% 78%, rgba(91,57,46,.28) 0%, transparent 42%),
+    linear-gradient(145deg,#241917 0%,#30211F 48%,#1B1211 100%);
+  background-attachment:fixed;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,241,181,.07), transparent 48%),
+    radial-gradient(ellipse at 0% 100%, rgba(193,219,232,.055), transparent 42%);
+}
+header{
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,241,181,.14), transparent 68%),
+    linear-gradient(180deg,rgba(36,25,23,.88),rgba(27,18,17,.52));
+  border-bottom:1px solid rgba(255,241,181,.22);
+  box-shadow:0 12px 35px rgba(15,8,7,.18);
+}
+.brand{ text-shadow:0 0 16px rgba(255,241,181,.25); }
+h1{ text-shadow:0 3px 22px rgba(255,241,181,.16); }
+.system,.panel{
+  background:linear-gradient(145deg,rgba(111,81,73,.34),rgba(42,29,27,.52));
+  border-color:rgba(193,219,232,.19);
+  box-shadow:inset 0 1px 0 rgba(255,241,181,.07),0 9px 24px rgba(15,8,7,.17);
+}
+.system{
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,background .22s ease;
+}
+.system:hover,.system:focus-visible{
+  transform:translateY(-2px);
+  border-color:rgba(255,241,181,.58);
+  box-shadow:0 0 0 1px rgba(255,241,181,.08),0 8px 24px rgba(255,241,181,.10),0 12px 24px rgba(15,8,7,.22);
+}
+.system.active{
+  background:linear-gradient(145deg,rgba(193,219,232,.13),rgba(255,241,181,.09));
+  border-color:rgba(255,241,181,.68);
+  box-shadow:inset 0 1px 0 rgba(255,241,181,.16),0 0 22px rgba(255,241,181,.12),0 10px 24px rgba(15,8,7,.22);
+}
+input,select{
+  background:linear-gradient(145deg,rgba(35,24,22,.72),rgba(75,52,48,.55));
+  border-color:rgba(193,219,232,.24);
+  box-shadow:inset 0 2px 7px rgba(10,5,4,.2),0 3px 12px rgba(10,5,4,.10);
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+input:focus,select:focus{
+  outline:none;
+  border-color:rgba(193,219,232,.72);
+  box-shadow:0 0 0 3px rgba(193,219,232,.10),0 0 18px rgba(193,219,232,.12),inset 0 2px 7px rgba(10,5,4,.18);
+}
+.primary{
+  background:linear-gradient(115deg,#FFF1B5 0%,#E8E0C1 48%,#C1DBE8 100%);
+  box-shadow:0 5px 0 rgba(27,18,16,.48),0 9px 22px rgba(255,241,181,.17),inset 0 1px 0 rgba(255,255,255,.65);
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+  position:relative;
+  overflow:hidden;
+}
+.primary::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(105deg,transparent 20%,rgba(255,255,255,.34) 48%,transparent 76%);
+  transform:translateX(-120%);
+  transition:transform .65s ease;
+}
+.primary:hover::after{transform:translateX(120%)}
+.primary:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.035);
+  box-shadow:0 7px 0 rgba(27,18,16,.42),0 13px 28px rgba(255,241,181,.23),0 0 18px rgba(193,219,232,.12);
+}
+.primary:active{
+  transform:translateY(3px);
+  box-shadow:0 2px 0 rgba(27,18,16,.5),0 4px 12px rgba(255,241,181,.12);
+}
+.secondary{
+  background:linear-gradient(145deg,rgba(91,65,60,.92),rgba(48,33,31,.96));
+  border-color:rgba(255,241,181,.48);
+  box-shadow:inset 0 1px 0 rgba(255,241,181,.12),0 4px 0 rgba(24,15,14,.48),0 8px 17px rgba(10,5,4,.22),0 0 13px rgba(255,241,181,.055);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.secondary:hover{
+  transform:translateY(-2px);
+  border-color:rgba(255,241,181,.8);
+  box-shadow:inset 0 1px 0 rgba(255,241,181,.18),0 6px 0 rgba(24,15,14,.42),0 12px 22px rgba(10,5,4,.25),0 0 18px rgba(255,241,181,.13);
+}
+.secondary:active{
+  transform:translateY(2px);
+  box-shadow:0 1px 0 rgba(24,15,14,.5),0 3px 8px rgba(10,5,4,.2);
+}
+.back{
+  background:radial-gradient(circle at 50% 32%,rgba(193,219,232,.20),transparent 48%),linear-gradient(145deg,#5b403a,#352522);
+  box-shadow:inset 0 0 22px rgba(255,241,181,.07),0 8px 20px rgba(10,5,4,.24);
+}
+.front{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 8px 22px rgba(10,5,4,.22);
+}
+.prompt{
+  background:linear-gradient(145deg,rgba(31,21,20,.72),rgba(72,49,45,.64));
+  border-color:rgba(193,219,232,.23);
+  box-shadow:inset 0 2px 9px rgba(10,5,4,.2);
+}
+footer{
+  border-color:rgba(255,241,181,.18);
+  background:linear-gradient(180deg,transparent,rgba(24,15,14,.16));
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
+}
+
+@media(max-width:380px){main{padding:16px 11px}.cards{gap:7px}.front .symbol{font-size:26px}.front strong{font-size:10px}}
+
+/* Warm frosted-glass controls */
+.system,.panel{
+  position:relative;
+  isolation:isolate;
+  background:linear-gradient(135deg,rgba(255,241,181,.105),rgba(193,219,232,.055) 42%,rgba(39,26,24,.48));
+  border:1px solid rgba(255,241,181,.24);
+  -webkit-backdrop-filter:blur(18px) saturate(125%);
+  backdrop-filter:blur(18px) saturate(125%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.15),
+    inset 0 -1px 0 rgba(193,219,232,.07),
+    0 10px 28px rgba(12,7,6,.23),
+    0 0 22px rgba(255,241,181,.045);
+}
+.system::before,.panel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:-1;
+  background:linear-gradient(125deg,rgba(255,255,255,.075),transparent 34%,rgba(193,219,232,.035) 72%,transparent);
+}
+.system:hover,.system:focus-visible{
+  background:linear-gradient(135deg,rgba(255,241,181,.16),rgba(193,219,232,.09) 48%,rgba(39,26,24,.52));
+  border-color:rgba(255,241,181,.48);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 12px 30px rgba(12,7,6,.26),0 0 25px rgba(255,241,181,.10);
+}
+.system.active{
+  background:linear-gradient(135deg,rgba(255,241,181,.19),rgba(193,219,232,.12) 48%,rgba(39,26,24,.48));
+  border-color:rgba(255,241,181,.58);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 0 24px rgba(255,241,181,.045),0 0 26px rgba(193,219,232,.10),0 12px 28px rgba(12,7,6,.24);
+}
+.primary,.secondary{
+  -webkit-backdrop-filter:blur(14px) saturate(135%);
+  backdrop-filter:blur(14px) saturate(135%);
+  border:1px solid rgba(255,241,181,.38);
+}
+.primary{
+  background:linear-gradient(135deg,rgba(255,241,181,.94),rgba(255,248,220,.82) 48%,rgba(193,219,232,.82));
+  color:#43302E;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(67,48,46,.10),0 5px 0 rgba(27,18,16,.42),0 10px 24px rgba(255,241,181,.18),0 0 18px rgba(193,219,232,.08);
+}
+.primary:hover{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 7px 0 rgba(27,18,16,.38),0 14px 30px rgba(255,241,181,.23),0 0 22px rgba(193,219,232,.14);
+}
+.secondary{
+  background:linear-gradient(135deg,rgba(255,241,181,.13),rgba(193,219,232,.085) 48%,rgba(35,24,22,.48));
+  color:#FFF1B5;
+  border-color:rgba(255,241,181,.32);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),inset 0 -1px 0 rgba(193,219,232,.08),0 4px 0 rgba(24,15,14,.42),0 9px 20px rgba(10,5,4,.20),0 0 15px rgba(255,241,181,.055);
+}
+.secondary:hover{
+  background:linear-gradient(135deg,rgba(255,241,181,.20),rgba(193,219,232,.13) 48%,rgba(35,24,22,.42));
+  border-color:rgba(255,241,181,.56);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.27),0 6px 0 rgba(24,15,14,.38),0 13px 25px rgba(10,5,4,.23),0 0 20px rgba(255,241,181,.12);
+}
+input,select,.prompt{
+  background:linear-gradient(135deg,rgba(255,241,181,.075),rgba(193,219,232,.045),rgba(30,20,19,.48));
+  -webkit-backdrop-filter:blur(14px) saturate(120%);
+  backdrop-filter:blur(14px) saturate(120%);
+  border-color:rgba(255,241,181,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),inset 0 2px 8px rgba(10,5,4,.14),0 5px 14px rgba(10,5,4,.10);
+}
+.back{
+  background:linear-gradient(145deg,rgba(193,219,232,.20),rgba(255,241,181,.13),rgba(45,31,29,.68));
+  -webkit-backdrop-filter:blur(16px);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,241,181,.32);
+}
+.front{
+  border:1px solid rgba(255,241,181,.42);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 10px 25px rgba(10,5,4,.24),0 0 15px rgba(193,219,232,.08);
+}
+
+</style>
+</head>
+<body>
+<header><div class="brand">THE ART OF DIVINATION</div><h1>占卜工作室</h1><p>探索象徵 · 解讀未知 · 傾聽內在</p></header>
+<main>
+<div class="heading">01 / 選擇占卜系統</div>
+<div class="systems">
+<button class="system active" data-system="tarot"><b>✧</b>塔羅牌<small>TAROT · 78</small></button>
+<button class="system" data-system="lenormand"><b>❖</b>雷諾曼<small>LENORMAND · 36</small></button>
+<button class="system" data-system="runes"><b>ᚱ</b>北歐符文<small>RUNES · 24</small></button>
+</div>
+<div class="heading">02 / 設定你的占卜</div>
+<div class="field"><label for="question">占卜問題（選填）</label><input id="question" maxlength="300" placeholder="例如：我與他的關係接下來會如何發展？"></div>
+<div class="grid"><div class="field"><label for="spread">選擇牌陣</label><select id="spread"></select></div><div class="field"><label for="count">抽取數量</label><select id="count"></select></div></div>
+<label class="toggle"><input type="checkbox" id="reversals" checked> 允許出現逆位</label>
+<button class="primary" id="draw">✧ 開始占卜 ✧</button>
+<section id="result" class="panel hidden">
+<h2 class="result-title">✧ 你的占卜結果 ✧</h2><div class="summary" id="summary"></div><div class="cards" id="cards"></div>
+<div class="actions"><button class="secondary" id="copy">複製 AI 解牌提示詞</button><button class="secondary" id="redraw">重新抽牌</button></div>
+<div class="heading">03 / AI 解牌提示詞</div><div class="prompt" id="prompt"></div>
+</section>
+<div class="note">占卜是一種象徵性探索與自我反思工具，並非對未來的絕對預測。<br>你的問題與抽牌結果不會自動傳送至伺服器。</div>
+</main><footer>DIVINATION STUDIO · EST. 2026</footer>
+<script>
+const major=[
+["愚者","新的開始、自由、冒險","🃏"],["魔術師","創造、行動、掌握資源","✦"],["女祭司","直覺、秘密、內在智慧","☾"],["皇后","豐盛、滋養、創造力","♛"],["皇帝","秩序、權威、穩定","♔"],["教皇","傳統、信念、指引","✧"],["戀人","愛情、選擇、結合","♡"],["戰車","意志、前進、勝利","⚔"],["力量","勇氣、耐心、內在力量","♌"],["隱者","沉思、獨處、尋找答案","☼"],["命運之輪","轉變、循環、機遇","☸"],["正義","公平、平衡、因果","⚖"],["倒吊人","等待、犧牲、換位思考","♧"],["死神","結束、轉化、重生","☠"],["節制","調和、療癒、平衡","⚗"],["惡魔","束縛、慾望、依賴","♆"],["高塔","突變、崩解、真相","⚡"],["星星","希望、信念、療癒","☆"],["月亮","不安、幻想、潛意識","☾"],["太陽","成功、喜悅、活力","☀"],["審判","覺醒、回顧、重生","♧"],["世界","完成、整合、圓滿","◎"]];
+const suits=[["權杖","行動、熱情、創造","🔥"],["聖杯","情感、關係、直覺","♡"],["寶劍","思想、溝通、衝突","⚔"],["錢幣","物質、工作、資源","◆"]];
+const ranks=[["Ace","起點與潛力"],["二","平衡與選擇"],["三","合作與成長"],["四","穩定與基礎"],["五","衝突與挑戰"],["六","調整與交流"],["七","考驗與策略"],["八","行動與進展"],["九","累積與接近完成"],["十","完成與責任"],["侍者","學習與消息"],["騎士","追求與行動"],["皇后","成熟與滋養"],["國王","掌握與領導"]];
+const tarot=major.map(x=>({name:x[0],meaning:x[1],symbol:x[2]}));
+suits.forEach(s=>ranks.forEach(r=>tarot.push({name:s[0]+"・"+r[0],meaning:s[1]+"；"+r[1],symbol:s[2]})));
+const lenormand=[
+["騎士","消息、到來、速度","🐎"],["幸運草","短暫機會、幸運","🍀"],["船","旅行、距離、探索","⛵"],["房子","家庭、安全、根基","⌂"],["樹","健康、成長、時間","🌳"],["雲","困惑、不確定、混亂","☁"],["蛇","複雜、迂迴、誘惑","🐍"],["棺材","結束、停滯、轉化","⚰"],["花束","禮物、邀請、愉悅","💐"],["鐮刀","突然切斷、決斷","⚔"],["鞭子","爭執、反覆、壓力","〰"],["鳥","對話、焦慮、消息","🐦"],["小孩","新開始、單純","♧"],["狐狸","策略、工作、謹慎","🦊"],["熊","力量、資源、保護","🐻"],["星星","希望、方向、靈感","☆"],["鸛鳥","變化、移動、改善","🕊"],["狗","友誼、忠誠、支持","🐕"],["高塔","界線、制度、孤立","♜"],["花園","社交、公開、群體","❀"],["山","阻礙、延遲、困難","⛰"],["岔路","選擇、分歧、可能性","⑂"],["老鼠","損耗、焦慮、流失","🐁"],["心","愛情、情感、喜悅","♡"],["戒指","承諾、契約、循環","○"],["書","知識、秘密、學習","▤"],["信","文件、訊息、聯絡","✉"],["男人","男性人物","♂"],["女人","女性人物","♀"],["百合","成熟、平靜、和諧","⚜"],["太陽","成功、活力、清晰","☀"],["月亮","情緒、名聲、認同","☾"],["鑰匙","答案、開啟、確定","⚿"],["魚","金錢、流動、豐盛","♓"],["錨","穩定、工作、持久","⚓"],["十字架","責任、考驗、壓力","✝"]
+].map(x=>({name:x[0],meaning:x[1],symbol:x[2]}));
+const runes=[
+["Fehu","ᚠ","財富、資源、流動"],["Uruz","ᚢ","力量、生命力、突破"],["Thurisaz","ᚦ","防禦、衝突、警覺"],["Ansuz","ᚨ","溝通、訊息、智慧"],["Raidho","ᚱ","旅程、方向、秩序"],["Kenaz","ᚲ","知識、啟發、創造"],["Gebo","ᚷ","交換、禮物、合作"],["Wunjo","ᚹ","喜悅、和諧、成就"],["Hagalaz","ᚺ","破壞、變化、考驗"],["Nauthiz","ᚾ","需求、限制、耐心"],["Isa","ᛁ","停滯、凝結、等待"],["Jera","ᛃ","收穫、循環、時間"],["Eihwaz","ᛇ","耐力、轉化、保護"],["Perthro","ᛈ","未知、命運、隱藏"],["Algiz","ᛉ","保護、警覺、連結"],["Sowilo","ᛊ","成功、光明、生命力"],["Tiwaz","ᛏ","正義、勇氣、責任"],["Berkano","ᛒ","新生、成長、滋養"],["Ehwaz","ᛖ","合作、移動、信任"],["Mannaz","ᛗ","自我、人際、群體"],["Laguz","ᛚ","直覺、情緒、流動"],["Ingwaz","ᛜ","孕育、完成、內在力量"],["Dagaz","ᛞ","突破、轉折、覺醒"],["Othala","ᛟ","傳承、家園、歸屬"]
+].map(x=>({name:x[0],symbol:x[1],meaning:x[2]}));
+const spreads={
+tarot:[["單張指引",1],["三張時間流",3],["五張深入分析",5],["七張關係分析",7],["十張凱爾特十字",10],["十二張年度分析",12]],
+lenormand:[["單張指引",1],["三張線性牌陣",3],["五張線性牌陣",5],["九宮格牌陣",9],["大牌陣 Grand Tableau",36]],
+runes:[["單符文",1],["三符文牌陣",3],["五符文牌陣",5],["九符文牌陣",9]]};
+const positions={1:["核心指引"],3:["過去","現在","未來"],5:["核心","阻礙","影響","建議","發展"],7:["現況","你的狀態","對方狀態","關係核心","隱藏因素","建議","發展"],9:["左上","上方","右上","左側","中心","右側","左下","下方","右下"],10:["現況","挑戰","根基","過去","可能結果","近期","你的狀態","外在環境","希望與恐懼","最終結果"],12:Array.from({length:12},(_,i)=>"第"+(i+1)+"個月"),36:Array.from({length:36},(_,i)=>"第"+(i+1)+"張")};
+let system="tarot",lastDraw=[];
+const $=id=>document.getElementById(id);
+function setup(){ $("spread").innerHTML="";spreads[system].forEach(s=>{let o=document.createElement("option");o.value=s[1];o.textContent=s[0];$("spread").append(o)});updateCount();}
+function updateCount(){let n=Number($("spread").value);$("count").innerHTML="";let o=document.createElement("option");o.value=n;o.textContent=n+" 張";$("count").append(o);}
+document.querySelectorAll(".system").forEach(b=>b.addEventListener("click",()=>{system=b.dataset.system;document.querySelectorAll(".system").forEach(x=>x.classList.toggle("active",x===b));$("result").classList.add("hidden");setup();}));
+$("spread").addEventListener("change",updateCount);
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function deck(){return system==="tarot"?tarot:system==="lenormand"?lenormand:runes;}
+function makePrompt(){let names={tarot:"塔羅牌",lenormand:"雷諾曼",runes:"北歐符文"};return "請以專業、客觀、深入的方式解讀以下占卜結果。請勿刻意討好或只給正面解釋，並清楚說明不確定性。\\n\\n占卜系統："+names[system]+"\\n問題："+($("question").value.trim()||"未提供")+
+"\\n牌陣："+$("spread").selectedOptions[0].textContent+"\\n日期："+new Date().toLocaleString("zh-TW")+"\\n\\n抽取結果：\\n"+lastDraw.map((c,i)=>(i+1)+". "+c.position+"："+c.name+"（"+(c.reversed?"逆位":"正位")+"），象徵："+c.meaning).join("\\n")+
+"\\n\\n請先分析牌與牌之間的組合，再解讀整體脈絡、主要矛盾、可能發展與實際建議。不要把象徵解讀當成確定事實。";}
+function draw(){let n=Number($("count").value),d=shuffle(deck());lastDraw=d.slice(0,n).map((c,i)=>({...c,reversed:system!=="runes"&&$("reversals").checked&&Math.random()<.5,position:(positions[n]||[])[i]||("第"+(i+1)+"張") }));render();}
+function render(){
+$("cards").innerHTML="";lastDraw.forEach((c,i)=>{let w=document.createElement("div");w.className="card-wrap";let card=document.createElement("div");card.className="card";let inner=document.createElement("div");inner.className="inner";let back=document.createElement("div");back.className="back";back.innerHTML="<span>✧</span><small>DIVINATION</small>";let front=document.createElement("div");front.className="front"+(c.reversed?" rev":"");let sym=document.createElement("div");sym.className="symbol";sym.textContent=c.symbol;let name=document.createElement("strong");name.textContent=c.name;let orient=document.createElement("small");orient.textContent=c.reversed?"逆位":"正位";front.append(sym,name,orient);inner.append(back,front);card.append(inner);let pos=document.createElement("div");pos.className="position";pos.textContent=c.position;let meaning=document.createElement("div");meaning.className="meaning";meaning.textContent=c.meaning;w.append(card,pos,meaning);$("cards").append(w);setTimeout(()=>card.classList.add("flipped"),200+i*180);});
+$("summary").textContent=$("spread").selectedOptions[0].textContent+" · "+new Date().toLocaleString("zh-TW");$("prompt").textContent=makePrompt();$("result").classList.remove("hidden");$("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+$("draw").addEventListener("click",draw);$("redraw").addEventListener("click",draw);
+$("copy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText($("prompt").textContent);$("copy").textContent="已複製！";}catch(e){let r=document.createElement("textarea");r.value=$("prompt").textContent;document.body.append(r);r.select();document.execCommand("copy");r.remove();$("copy").textContent="已複製！";}setTimeout(()=>$("copy").textContent="複製 AI 解牌提示詞",1800);});
+setup();
+</script>
+</body>
+</html>
