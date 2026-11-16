@@ -240,7 +240,7 @@ input,select,.prompt{
 .history-dialog{width:min(720px,100%);max-height:85vh;overflow:auto;background:linear-gradient(145deg,#382725,#241918);border:1px solid rgba(255,241,181,.3);border-radius:20px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.1)}
 .history-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .history-head h2{margin:0;color:var(--gold);font-size:20px}
-.history-close{background:rgba(193,219,232,.1);border:1px solid var(--line);color:var(--gold);border-radius:10px;padding:8px 12px;cursor:pointer}
+.history-close{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;padding:0;background:rgba(193,219,232,.10);border:1px solid var(--line);border-radius:50%;color:var(--gold);font-family:Arial,sans-serif!important;font-size:24px!important;font-weight:300!important;line-height:1;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}.history-close:hover{background:rgba(193,219,232,.2);border-color:var(--gold);transform:rotate(90deg)}
 .history-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
 .history-tab{background:rgba(193,219,232,.08);border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:var(--light);cursor:pointer}
 .history-tab.active{background:rgba(255,241,181,.16);border-color:var(--gold);color:var(--gold)}
@@ -264,6 +264,16 @@ header h1{
   letter-spacing:6px;
 }
 
+
+/* Language selector and Google Translate integration */
+.language-bar{display:flex;justify-content:flex-end;align-items:center;gap:9px;margin:0 0 18px}
+.language-bar label{margin:0;font-size:11px;letter-spacing:1px}
+.language-bar select{width:auto;min-width:155px;padding:9px 32px 9px 12px;font-size:12px}
+#google_translate_element{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+.goog-te-banner-frame,.skiptranslate iframe{display:none!important}
+body{top:0!important}
+.goog-logo-link,.goog-te-gadget{display:none!important}
+@media(max-width:520px){.language-bar{margin-bottom:14px}.language-bar select{min-width:145px}}
 </style>
 </head>
 <body>
