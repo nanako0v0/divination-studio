@@ -289,6 +289,50 @@ header{
 .goog-te-banner-frame,.skiptranslate iframe{display:none!important}
 body{top:0!important}
 .goog-logo-link,.goog-te-gadget{display:none!important}
+/* Original glass-card artwork and richer frosted-glass finish */
+.panel,.system,.history-dialog,.history-trigger,.preset-category,.preset-question,.secondary,input,select,.prompt{
+ -webkit-backdrop-filter:blur(22px) saturate(145%)!important;
+ backdrop-filter:blur(22px) saturate(145%)!important;
+}
+.panel{
+ background:linear-gradient(145deg,rgba(255,241,181,.12),rgba(193,219,232,.075) 38%,rgba(30,20,19,.58))!important;
+ border-color:rgba(255,241,181,.3)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -1px 0 rgba(193,219,232,.09),0 18px 42px rgba(8,4,4,.3),0 0 28px rgba(193,219,232,.055)!important;
+}
+.card{filter:drop-shadow(0 12px 16px rgba(0,0,0,.28))}
+.front,.back{
+ overflow:hidden;
+ border-radius:11px!important;
+ border:1px solid rgba(255,241,181,.62)!important;
+}
+.back{
+ background:
+  radial-gradient(circle at 50% 45%,rgba(193,219,232,.18),transparent 38%),
+  repeating-radial-gradient(circle at 50% 50%,transparent 0 13px,rgba(255,241,181,.075) 14px 15px,transparent 16px 25px),
+  linear-gradient(145deg,#59413b,#241917)!important;
+ box-shadow:inset 0 0 0 5px rgba(255,241,181,.055),inset 0 0 30px rgba(255,241,181,.12),0 10px 24px rgba(0,0,0,.32)!important;
+}
+.back span{font-size:0!important;width:58px;height:58px;border:1px solid rgba(255,241,181,.65);border-radius:50%;display:grid;place-items:center;position:relative}
+.back span:before{content:"✧";font-family:Georgia,serif;font-size:34px;color:#FFF1B5;text-shadow:0 0 18px rgba(255,241,181,.7)}
+.back span:after{content:"";position:absolute;inset:7px;border:1px solid rgba(193,219,232,.45);border-radius:50%}
+.back small{letter-spacing:3px!important;color:rgba(255,241,181,.78)}
+.front{
+ justify-content:space-between!important;
+ padding:9px 7px 11px!important;
+ background:
+  radial-gradient(ellipse at 50% 35%,rgba(193,219,232,.17),transparent 54%),
+  linear-gradient(155deg,#59413a 0%,#30211f 58%,#201615 100%)!important;
+ color:#FFF1B5!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 0 26px rgba(255,241,181,.07),0 12px 28px rgba(0,0,0,.32)!important;
+}
+.front:before{content:"";position:absolute;inset:5px;border:1px solid rgba(255,241,181,.25);border-radius:7px;pointer-events:none}
+.front:after{content:"";position:absolute;inset:10px;background:linear-gradient(135deg,rgba(255,255,255,.07),transparent 35%,transparent 70%,rgba(193,219,232,.06));pointer-events:none}
+.front .card-art{width:100%;height:66%;max-height:180px;display:block;position:relative;z-index:1}
+.front strong{font-size:clamp(9px,2.5vw,12px)!important;letter-spacing:1px;color:#FFF1B5!important;position:relative;z-index:1}
+.front small{margin-top:2px!important;font-size:9px!important;letter-spacing:2px;color:rgba(193,219,232,.9)!important;position:relative;z-index:1}
+.front.rev .card-art{transform:rotate(180deg)}
+.position{letter-spacing:1px}
+@media(max-width:380px){.front .card-art{height:62%}}
 </style>
 </head>
 <body>
@@ -372,7 +416,7 @@ function renderPresetQuestions(category){
  $("presetQuestions").innerHTML="";
  presetData[category].forEach(question=>{
   const b=document.createElement("button");b.type="button";b.className="preset-question";b.textContent=question;
-  b.addEventListener("click",()=>{$("question").value=question;$("question").focus();});
+  b.addEventListener("click",()=>{$("question").value=question;});
   $("presetQuestions").append(b);
  });
 }
@@ -415,9 +459,31 @@ function makePrompt(){
  }
  return common+specialist+"\n\n【輸出結構】\n一、整體結論\n二、位置與牌／符文的關係分析\n三、組合與整體脈絡\n四、可能發展與關鍵變數\n五、具體建議\n六、解讀限制與仍待確認之處";
 }
+function cardArtwork(c,index){
+ const motifs=[
+  '<path d="M60 20 C35 42 35 75 60 105 C85 75 85 42 60 20Z"/><path d="M60 34V91 M44 60H76"/>',
+  '<circle cx="60" cy="58" r="24"/><path d="M60 17V99 M19 58H101 M31 29L89 87 M89 29L31 87"/>',
+  '<path d="M60 18 L72 47 L102 58 L72 69 L60 98 L48 69 L18 58 L48 47Z"/><circle cx="60" cy="58" r="9"/>',
+  '<path d="M30 86 Q60 22 90 86 M39 86 Q60 43 81 86 M60 20V96"/>',
+  '<path d="M60 18 C82 36 87 62 60 96 C33 62 38 36 60 18Z"/><path d="M60 30V86 M46 58H74"/>',
+  '<path d="M25 80 Q60 20 95 80 M25 80 Q60 100 95 80"/><circle cx="60" cy="60" r="13"/>',
+  '<path d="M60 18V98 M30 38H90 M30 78H90 M30 38L90 78 M90 38L30 78"/>',
+  '<path d="M60 18 L92 40 L82 82 L60 100 L38 82 L28 40Z"/><circle cx="60" cy="59" r="14"/>',
+  '<path d="M25 85 L60 20 L95 85Z"/><path d="M42 85V63H78V85 M60 20V63"/>',
+  '<path d="M60 18 C80 37 80 78 60 98 C40 78 40 37 60 18Z"/><path d="M40 58H80"/>',
+  '<circle cx="60" cy="58" r="31"/><circle cx="60" cy="58" r="20"/><circle cx="60" cy="58" r="7"/>',
+  '<path d="M60 17V99 M31 32H89 M31 84H89"/><path d="M31 32L60 58L89 32 M31 84L60 58L89 84"/>'
+ ];
+ const motif=motifs[index%motifs.length];
+ const stars=[[18,22],[101,29],[22,95],[99,91],[36,12],[84,108]];
+ const dots=stars.map(([x,y],n)=>'<circle cx="'+x+'" cy="'+y+'" r="'+(n%2?1.5:2)+'"/>').join("");
+ const uid="art"+index;
+ return '<svg viewBox="0 0 120 120" role="img" aria-label="原創象徵插畫" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF1B5"/><stop offset="1" stop-color="#C1DBE8"/></linearGradient></defs><g fill="none" stroke="url(#'+uid+')" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">'+
+ '<circle cx="60" cy="58" r="46" opacity=".22"/><circle cx="60" cy="58" r="39" stroke-dasharray="1 5" opacity=".8"/>'+motif+dots+'</g><path d="M16 112H104" stroke="#FFF1B5" opacity=".35" stroke-width=".7"/></svg>';
+}
 function draw(){let n=Number($("count").value),d=shuffle(deck());lastDraw=d.slice(0,n).map((c,i)=>({...c,reversed:system!=="runes"&&$("reversals").checked&&Math.random()<.5,position:(positions[n]||[])[i]||("第"+(i+1)+"張") }));render();}
 function render(){
-$("cards").innerHTML="";lastDraw.forEach((c,i)=>{let w=document.createElement("div");w.className="card-wrap";let card=document.createElement("div");card.className="card";let inner=document.createElement("div");inner.className="inner";let back=document.createElement("div");back.className="back";back.innerHTML="<span>✧</span><small>DIVINATION</small>";let front=document.createElement("div");front.className="front"+(c.reversed?" rev":"");let sym=document.createElement("div");sym.className="symbol";sym.textContent=c.symbol;let name=document.createElement("strong");name.textContent=c.name;let orient=document.createElement("small");orient.textContent=system==="runes"?"符文":(c.reversed?"逆位":"正位");front.append(sym,name,orient);inner.append(back,front);card.append(inner);let pos=document.createElement("div");pos.className="position";pos.textContent=c.position;let meaning=document.createElement("div");meaning.className="meaning";meaning.textContent=c.meaning;w.append(card,pos,meaning);$("cards").append(w);setTimeout(()=>card.classList.add("flipped"),200+i*180);});
+$("cards").innerHTML="";lastDraw.forEach((c,i)=>{let w=document.createElement("div");w.className="card-wrap";let card=document.createElement("div");card.className="card";let inner=document.createElement("div");inner.className="inner";let back=document.createElement("div");back.className="back";back.innerHTML="<span>✧</span><small>DIVINATION</small>";let front=document.createElement("div");front.className="front"+(c.reversed?" rev":"");let art=document.createElement("div");art.className="card-art";art.innerHTML=cardArtwork(c,i);let name=document.createElement("strong");name.textContent=c.name;let orient=document.createElement("small");orient.textContent=system==="runes"?"符文":(c.reversed?"逆位":"正位");front.append(art,name,orient);inner.append(back,front);card.append(inner);let pos=document.createElement("div");pos.className="position";pos.textContent=c.position;let meaning=document.createElement("div");meaning.className="meaning";meaning.textContent=c.meaning;w.append(card,pos,meaning);$("cards").append(w);setTimeout(()=>card.classList.add("flipped"),200+i*180);});
 $("summary").textContent=$("spread").selectedOptions[0].textContent+" · "+new Date().toLocaleString("zh-TW");$("prompt").textContent=makePrompt();$("result").classList.remove("hidden");$("result").scrollIntoView({behavior:"smooth",block:"start"});
 }
 $("draw").addEventListener("click",draw);$("redraw").addEventListener("click",draw);
