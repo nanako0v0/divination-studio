@@ -333,6 +333,24 @@ body{top:0!important}
 .front.rev .card-art{transform:rotate(180deg)}
 .position{letter-spacing:1px}
 @media(max-width:380px){.front .card-art{height:62%}}
+
+/* Antique illustrated card faces: parchment, painted landscapes and aged frame */
+.front{
+ background:linear-gradient(145deg,#ead9b8 0%,#c6a77b 100%)!important;
+ color:#3a2a20!important;
+ border:2px solid #b28a55!important;
+ padding:5px 5px 8px!important;
+ box-shadow:inset 0 0 0 2px rgba(255,248,222,.72),inset 0 0 18px rgba(73,42,24,.22),0 12px 28px rgba(0,0,0,.34)!important;
+}
+.front:before{inset:4px!important;border:1px solid rgba(92,58,36,.48)!important;border-radius:5px!important}
+.front:after{display:none!important}
+.front .card-art{height:74%!important;max-height:none!important;width:100%;border:1px solid rgba(76,49,34,.52);box-shadow:inset 0 0 18px rgba(20,10,5,.2);background:#9b7654}
+.front .card-art svg{display:block;width:100%;height:100%}
+.front strong{color:#3c2a20!important;font-family:Georgia,"Noto Serif TC",serif!important;font-weight:700!important;letter-spacing:.4px!important;font-size:clamp(9px,2.5vw,12px)!important;text-shadow:0 1px rgba(255,255,255,.45)}
+.front small{color:#70533c!important;font-size:8px!important;letter-spacing:1.5px!important}
+.front.rev .card-art{transform:rotate(180deg)}
+@media(max-width:380px){.front .card-art{height:70%!important}}
+
 </style>
 </head>
 <body>
@@ -460,26 +478,29 @@ function makePrompt(){
  return common+specialist+"\n\n【輸出結構】\n一、整體結論\n二、位置與牌／符文的關係分析\n三、組合與整體脈絡\n四、可能發展與關鍵變數\n五、具體建議\n六、解讀限制與仍待確認之處";
 }
 function cardArtwork(c,index){
- const motifs=[
-  '<path d="M60 20 C35 42 35 75 60 105 C85 75 85 42 60 20Z"/><path d="M60 34V91 M44 60H76"/>',
-  '<circle cx="60" cy="58" r="24"/><path d="M60 17V99 M19 58H101 M31 29L89 87 M89 29L31 87"/>',
-  '<path d="M60 18 L72 47 L102 58 L72 69 L60 98 L48 69 L18 58 L48 47Z"/><circle cx="60" cy="58" r="9"/>',
-  '<path d="M30 86 Q60 22 90 86 M39 86 Q60 43 81 86 M60 20V96"/>',
-  '<path d="M60 18 C82 36 87 62 60 96 C33 62 38 36 60 18Z"/><path d="M60 30V86 M46 58H74"/>',
-  '<path d="M25 80 Q60 20 95 80 M25 80 Q60 100 95 80"/><circle cx="60" cy="60" r="13"/>',
-  '<path d="M60 18V98 M30 38H90 M30 78H90 M30 38L90 78 M90 38L30 78"/>',
-  '<path d="M60 18 L92 40 L82 82 L60 100 L38 82 L28 40Z"/><circle cx="60" cy="59" r="14"/>',
-  '<path d="M25 85 L60 20 L95 85Z"/><path d="M42 85V63H78V85 M60 20V63"/>',
-  '<path d="M60 18 C80 37 80 78 60 98 C40 78 40 37 60 18Z"/><path d="M40 58H80"/>',
-  '<circle cx="60" cy="58" r="31"/><circle cx="60" cy="58" r="20"/><circle cx="60" cy="58" r="7"/>',
-  '<path d="M60 17V99 M31 32H89 M31 84H89"/><path d="M31 32L60 58L89 32 M31 84L60 58L89 84"/>'
+ const palette=[
+  ["#d8b77b","#9d6549","#354b45","#e9d9b5"],["#c6a0a0","#754d55","#303e50","#e8d4b5"],
+  ["#d5c18c","#9a704a","#485b48","#f0dfb7"],["#b9c7bd","#607b75","#3c4a55","#ead9b9"],
+  ["#d8a66d","#995c43","#4b4c39","#ead6ad"],["#b5a7c4","#665b7d","#34495a","#e9d9bd"]
  ];
- const motif=motifs[index%motifs.length];
- const stars=[[18,22],[101,29],[22,95],[99,91],[36,12],[84,108]];
- const dots=stars.map(([x,y],n)=>'<circle cx="'+x+'" cy="'+y+'" r="'+(n%2?1.5:2)+'"/>').join("");
- const uid="art"+index;
- return '<svg viewBox="0 0 120 120" role="img" aria-label="原創象徵插畫" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF1B5"/><stop offset="1" stop-color="#C1DBE8"/></linearGradient></defs><g fill="none" stroke="url(#'+uid+')" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">'+
- '<circle cx="60" cy="58" r="46" opacity=".22"/><circle cx="60" cy="58" r="39" stroke-dasharray="1 5" opacity=".8"/>'+motif+dots+'</g><path d="M16 112H104" stroke="#FFF1B5" opacity=".35" stroke-width=".7"/></svg>';
+ const hash=[...c.name].reduce((a,ch)=>a+ch.charCodeAt(0),0);
+ const p=palette[hash%palette.length], uid="paint"+index;
+ const scenes=[
+  '<path d="M13 111 Q38 83 62 103 T107 94V143H13Z" fill="#354b45"/><path d="M12 119Q43 98 64 116T108 107" fill="none" stroke="#d8c08f" stroke-width="2"/><path d="M57 45q-7 8-4 18l-9 21 13 7 10-21-1-18Z" fill="#9d6549"/><circle cx="59" cy="37" r="8" fill="#d6a77d"/><path d="M48 52l-10 19 8 3 12-14 10 18 8-4-10-27" fill="#e4d2ad"/><path d="M72 27l17 9-8 2" fill="none" stroke="#ead9b5" stroke-width="2"/>',
+  '<path d="M18 117Q60 92 102 117V145H18Z" fill="#43584d"/><path d="M31 107V63l29-19 29 19v44" fill="#8e6049" stroke="#ead9b5" stroke-width="2"/><path d="M42 106V76h36v30" fill="#d8b77b"/><path d="M60 18v27M48 31h24" stroke="#f2dfb7" stroke-width="3"/><circle cx="60" cy="30" r="11" fill="none" stroke="#e8d4a8" stroke-width="2"/>',
+  '<path d="M12 119Q40 93 60 111T108 112V145H12Z" fill="#43574d"/><path d="M27 45h66v68H27Z" fill="#a87554"/><path d="M35 51h50v57H35Z" fill="#e2c99b"/><path d="M43 111V67h34v44" fill="#4b5c59"/><path d="M60 16c-18 18-18 28 0 37 18-9 18-19 0-37Z" fill="#e5d4ae"/><path d="M60 54v47" stroke="#76564a" stroke-width="3"/>',
+  '<path d="M13 119Q39 98 60 111T107 111V145H13Z" fill="#43594c"/><path d="M60 29c-18 0-29 15-29 34 0 25 13 38 29 38s29-13 29-38C89 44 78 29 60 29Z" fill="#b77d5c"/><path d="M39 55q21-27 42 0v15H39Z" fill="#59463e"/><path d="M44 83q16-10 32 0l9 27H35Z" fill="#e3d2ad"/><path d="M21 115Q60 92 99 115" fill="none" stroke="#d9bd8c" stroke-width="3"/>',
+  '<path d="M12 119Q40 97 60 110T108 111V145H12Z" fill="#42564c"/><path d="M60 22v76M35 45h50" stroke="#e6d2aa" stroke-width="3"/><circle cx="60" cy="43" r="19" fill="#d7b779" stroke="#785747" stroke-width="3"/><path d="M43 96q17-18 34 0l10 18H33Z" fill="#8d5b4a"/><path d="M48 42h24M60 30v25" stroke="#795747" stroke-width="2"/>',
+  '<path d="M13 118Q42 96 60 110T107 111V145H13Z" fill="#425449"/><path d="M60 27c-17 0-25 14-25 30 0 19 11 31 25 31s25-12 25-31c0-16-8-30-25-30Z" fill="#d4a77b"/><path d="M36 48q24-36 48 0l-5 8H41Z" fill="#5a443e"/><path d="M44 88l-8 27h48l-8-27Z" fill="#9c654b"/><path d="M16 112l20-13M104 112L84 99" stroke="#e7d4b2" stroke-width="3"/>',
+  '<path d="M12 121Q41 96 60 112T108 110V145H12Z" fill="#40584b"/><circle cx="60" cy="55" r="27" fill="#d9b977" stroke="#f0dfbd" stroke-width="2"/><path d="M60 18v15M60 82v15M23 55h15M82 55h15M34 29l11 11M75 70l11 11M86 29L75 40M45 70L34 81" stroke="#f0dfbd" stroke-width="3"/><path d="M42 112q18-27 36 0" fill="none" stroke="#e4d0a8" stroke-width="4"/>',
+  '<path d="M13 120Q38 99 60 111T107 110V145H13Z" fill="#425449"/><path d="M60 25 91 111H29Z" fill="#9c654c" stroke="#ead8b4" stroke-width="2"/><path d="M60 42v60M43 76h34" stroke="#e8d7b4" stroke-width="3"/><circle cx="60" cy="35" r="9" fill="#d9b77c"/>',
+  '<path d="M13 119Q40 98 60 111T107 111V145H13Z" fill="#42564b"/><path d="M60 21c-17 18-20 37 0 56 20-19 17-38 0-56Z" fill="#d8b77b"/><path d="M60 77v38M40 93l20 12 20-12" fill="none" stroke="#f0dfbd" stroke-width="3"/><circle cx="60" cy="45" r="8" fill="#8d5c48"/>',
+  '<path d="M12 119Q38 99 60 111T108 110V145H12Z" fill="#43584c"/><path d="M29 102q31-67 62 0" fill="none" stroke="#d9b77b" stroke-width="7"/><path d="M40 101q20-43 40 0" fill="none" stroke="#a46c50" stroke-width="6"/><circle cx="60" cy="46" r="13" fill="#e2c89a"/><path d="M60 59v43M44 75h32" stroke="#ead9b5" stroke-width="4"/>',
+  '<path d="M12 120Q40 98 60 111T108 110V145H12Z" fill="#43574b"/><path d="M60 19 83 43 75 88 60 106 45 88 37 43Z" fill="#a56b4d" stroke="#ead7b0" stroke-width="2"/><path d="M60 30v61M43 53h34" stroke="#e6d1a7" stroke-width="3"/><circle cx="60" cy="47" r="8" fill="#e8d5b2"/>'
+ ];
+ const scene=scenes[hash%scenes.length];
+ const label=c.name.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+ return '<svg viewBox="0 0 120 150" role="img" aria-label="'+label+' 古典插畫" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'bg" x2="0" y2="1"><stop stop-color="'+p[0]+'"/><stop offset=".55" stop-color="'+p[1]+'"/><stop offset="1" stop-color="'+p[2]+'"/></linearGradient><filter id="'+uid+'grain"><feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="3" seed="'+(hash%99)+'"/><feColorMatrix values="0 0 0 0 .5 0 0 0 0 .4 0 0 0 0 .2 0 0 0 .16 0"/></filter><clipPath id="'+uid+'clip"><rect x="5" y="5" width="110" height="140" rx="3"/></clipPath></defs><g clip-path="url(#'+uid+'clip)"><rect x="5" y="5" width="110" height="140" fill="url(#'+uid+'bg)"/><circle cx="88" cy="31" r="17" fill="'+p[3]+'" opacity=".78"/><path d="M5 83Q29 63 50 82T91 77T115 78V145H5Z" fill="'+p[2]+'" opacity=".72"/><path d="M5 105Q29 85 55 103T115 98V145H5Z" fill="'+p[1]+'" opacity=".78"/>'+scene+'<rect x="5" y="5" width="110" height="140" filter="url(#'+uid+'grain)" opacity=".42"/><rect x="8" y="8" width="104" height="134" fill="none" stroke="'+p[3]+'" stroke-width="1.4"/><path d="M13 18h12M95 18h12M13 132h12M95 132h12" stroke="'+p[3]+'" stroke-width="2"/></g></svg>';
 }
 function draw(){let n=Number($("count").value),d=shuffle(deck());lastDraw=d.slice(0,n).map((c,i)=>({...c,reversed:system!=="runes"&&$("reversals").checked&&Math.random()<.5,position:(positions[n]||[])[i]||("第"+(i+1)+"張") }));render();}
 function render(){
