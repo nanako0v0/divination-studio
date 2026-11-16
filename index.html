@@ -215,6 +215,25 @@ input,select,.prompt{
   box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 10px 25px rgba(10,5,4,.24),0 0 15px rgba(193,219,232,.08);
 }
 
+
+.history-trigger{display:block;width:100%;margin:14px 0 0;padding:12px 16px;border:1px solid rgba(255,241,181,.34);border-radius:14px;background:linear-gradient(135deg,rgba(193,219,232,.13),rgba(255,241,181,.07),rgba(45,31,29,.38));color:var(--gold);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 22px rgba(10,5,4,.2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);cursor:pointer}
+.history-trigger:hover,.history-tab:hover{border-color:rgba(255,241,181,.7);box-shadow:0 0 18px rgba(193,219,232,.13)}
+.history-modal{position:fixed;inset:0;z-index:30;background:rgba(12,8,7,.78);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:18px}
+.history-modal.hidden{display:none}
+.history-dialog{width:min(720px,100%);max-height:85vh;overflow:auto;background:linear-gradient(145deg,#382725,#241918);border:1px solid rgba(255,241,181,.3);border-radius:20px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.1)}
+.history-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.history-head h2{margin:0;color:var(--gold);font-size:20px}
+.history-close{background:rgba(193,219,232,.1);border:1px solid var(--line);color:var(--gold);border-radius:10px;padding:8px 12px;cursor:pointer}
+.history-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+.history-tab{background:rgba(193,219,232,.08);border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:var(--light);cursor:pointer}
+.history-tab.active{background:rgba(255,241,181,.16);border-color:var(--gold);color:var(--gold)}
+.history-copy{color:var(--light);font-size:14px;line-height:1.9}
+.history-copy h3{color:var(--gold);font-size:16px;margin:18px 0 6px}
+.history-copy p{margin:7px 0}
+.history-copy a{color:var(--gold);text-decoration:underline;text-underline-offset:3px}
+.history-note{padding:10px 12px;border-left:2px solid var(--gold);background:rgba(255,241,181,.06);border-radius:0 9px 9px 0;margin:14px 0}
+@media(max-width:520px){.history-dialog{padding:17px}.history-copy{font-size:13px}}
+
 </style>
 </head>
 <body>
@@ -236,6 +255,20 @@ input,select,.prompt{
 <div class="actions"><button class="secondary" id="copy">複製 AI 解牌提示詞</button><button class="secondary" id="redraw">重新抽牌</button></div>
 <div class="heading">03 / AI 解牌提示詞</div><div class="prompt" id="prompt"></div>
 </section>
+
+<button class="history-trigger" id="historyOpen" type="button">✧ 了解歷史與由來</button>
+<div class="history-modal hidden" id="historyModal" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
+ <div class="history-dialog">
+  <div class="history-head"><h2 id="historyTitle">占卜系統的歷史與由來</h2><button class="history-close" id="historyClose" type="button" aria-label="關閉">關閉 ✕</button></div>
+  <div class="history-tabs" role="tablist">
+   <button class="history-tab active" data-history="tarot" type="button">塔羅牌</button>
+   <button class="history-tab" data-history="lenormand" type="button">雷諾曼</button>
+   <button class="history-tab" data-history="runes" type="button">北歐符文</button>
+  </div>
+  <article class="history-copy" id="historyContent"></article>
+ </div>
+</div>
+
 <div class="note">占卜是一種象徵性探索與自我反思工具，並非對未來的絕對預測。<br>你的問題與抽牌結果不會自動傳送至伺服器。</div>
 </main><footer>DIVINATION STUDIO · EST. 2026</footer>
 <script>
@@ -258,15 +291,45 @@ runes:[["單符文",1],["三符文牌陣",3],["五符文牌陣",5],["九符文�
 const positions={1:["核心指引"],3:["過去","現在","未來"],5:["核心","阻礙","影響","建議","發展"],7:["現況","你的狀態","對方狀態","關係核心","隱藏因素","建議","發展"],9:["左上","上方","右上","左側","中心","右側","左下","下方","右下"],10:["現況","挑戰","根基","過去","可能結果","近期","你的狀態","外在環境","希望與恐懼","最終結果"],12:Array.from({length:12},(_,i)=>"第"+(i+1)+"個月"),36:Array.from({length:36},(_,i)=>"第"+(i+1)+"張")};
 let system="tarot",lastDraw=[];
 const $=id=>document.getElementById(id);
+
+const historyData={
+ tarot:`<h3>起源：最初不是占卜牌</h3><p>塔羅牌的可考歷史通常追溯至15世紀的義大利北部。早期塔羅牌是供人遊戲的紙牌，當時常稱為「trionfi」，後來逐漸形成今日熟悉的塔羅牌系統。它最初並不是為了預測命運而設計。</p><h3>從紙牌遊戲到神秘學</h3><p>18世紀末，歐洲部分作者開始將塔羅牌連結到古埃及、神秘知識與占卜。這些說法深刻影響後世塔羅文化，但不少古老起源論並沒有可靠史料支持。19至20世紀的神秘學團體進一步建立象徵系統；1909年出版的 Rider–Waite–Smith 牌組，尤其影響現代常見的圖像與解牌方式。</p><h3>今日的塔羅</h3><p>現代塔羅同時被用於牌卡遊戲、藝術創作、靈性實踐與自我反思。不同牌組和流派可能採用不同象徵，不存在所有人都必須遵循的唯一解法。</p><div class="history-note">歷史提醒：塔羅作為紙牌的15世紀起源，與後來的占卜用途是不同階段，請勿把後世神秘學傳說當成已證實的中世紀史實。</div><p>延伸資料：<a href="https://www.britannica.com/topic/tarot" target="_blank" rel="noopener">Encyclopaedia Britannica：Tarot</a> · <a href="https://www.metmuseum.org/" target="_blank" rel="noopener">The Metropolitan Museum of Art</a></p>`,
+ lenormand:`<h3>起源：18世紀末的紙牌遊戲</h3><p>今日常見的雷諾曼牌，與18世紀末德語地區流行的「希望之牌」（Das Spiel der Hoffnung）有關。這類牌最初是一種帶有圖像與遊戲規則的紙牌遊戲，後來才逐漸發展出占卜用途。</p><h3>名稱從何而來？</h3><p>「雷諾曼」之名取自法國著名占卜師 Marie Anne Lenormand（1772–1843）。不過，現今的36張雷諾曼牌並非她本人創作或親自設計；她去世後，出版商借用她的名聲推出相關牌卡，名稱與系統才逐漸固定。</p><h3>現代雷諾曼的特色</h3><p>雷諾曼通常以36張牌構成，解讀重視牌與牌之間的組合、相鄰關係與句子式閱讀。不同於塔羅常見的單張象徵延伸，雷諾曼往往需要把多張牌連在一起理解。</p><div class="history-note">歷史提醒：Marie Anne Lenormand 是真實歷史人物，但「現代雷諾曼牌由她發明」並不是可靠的歷史結論。</div><p>延伸資料：<a href="https://www.britannica.com/biography/Marie-Anne-Adelaide-Lenormand" target="_blank" rel="noopener">Encyclopaedia Britannica：Marie-Anne Lenormand</a> · <a href="https://www.worldcat.org/" target="_blank" rel="noopener">WorldCat：歷史牌卡書目檢索</a></p>`,
+ runes:`<h3>起源：古日耳曼語族的文字系統</h3><p>符文（runic letters）首先是日耳曼語族使用的文字系統，刻寫於石碑、金屬、木材、骨器與日常物件。最早的盧恩銘文大約出現在公元2世紀前後。最常被現代占卜使用的古弗薩克（Elder Futhark）共有24個字母，名稱來自前六個符文的排列。</p><h3>歷史上的演變</h3><p>符文並非單一時代固定不變的符號。古弗薩克之後，北歐地區發展出較晚的 Younger Futhark（年輕弗薩克，常見於維京時代），英格蘭與弗里西亞地區也有 Anglo-Saxon Futhorc 等不同系統。不同時期的符文數量、字形與語言用途並不相同。</p><h3>符文與占卜</h3><p>古代文獻確實記錄過日耳曼人使用刻有記號的籤片等習俗，但這不等於今日網路常見的24枚符文占卜關鍵字，已被證明是古代固定傳承。現代符文占卜的許多對應意義，是近現代靈性與神秘學傳統整理、發展出的詮釋。</p><div class="history-note">歷史提醒：符文作為文字有大量銘文證據；但現代「每枚符文對應一種占卜牌義」的系統，不能直接視為已由古代史料證實。</div><p>延伸資料：<a href="https://www.britannica.com/topic/runic-alphabet" target="_blank" rel="noopener">Encyclopaedia Britannica：Runic alphabet</a> · <a href="https://en.wikipedia.org/wiki/Elder_Futhark" target="_blank" rel="noopener">Elder Futhark（入門索引）</a></p>`
+};
+function showHistory(which){
+ const key=which||system;
+ $("historyContent").innerHTML=historyData[key];
+ document.querySelectorAll(".history-tab").forEach(b=>b.classList.toggle("active",b.dataset.history===key));
+ $("historyModal").classList.remove("hidden");
+ $("historyClose").focus();
+}
+$("historyOpen").addEventListener("click",()=>showHistory(system));
+document.querySelectorAll(".history-tab").forEach(b=>b.addEventListener("click",()=>showHistory(b.dataset.history)));
+$("historyClose").addEventListener("click",()=>$("historyModal").classList.add("hidden"));
+$("historyModal").addEventListener("click",e=>{if(e.target===$("historyModal"))$("historyModal").classList.add("hidden");});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("historyModal").classList.add("hidden");});
+
 function setup(){ $("spread").innerHTML="";spreads[system].forEach(s=>{let o=document.createElement("option");o.value=s[1];o.textContent=s[0];$("spread").append(o)});updateCount();}
 function updateCount(){let n=Number($("spread").value);$("count").innerHTML="";let o=document.createElement("option");o.value=n;o.textContent=n+" 張";$("count").append(o);}
 document.querySelectorAll(".system").forEach(b=>b.addEventListener("click",()=>{system=b.dataset.system;document.querySelectorAll(".system").forEach(x=>x.classList.toggle("active",x===b));$("result").classList.add("hidden");setup();}));
 $("spread").addEventListener("change",updateCount);
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function deck(){return system==="tarot"?tarot:system==="lenormand"?lenormand:runes;}
-function makePrompt(){let names={tarot:"塔羅牌",lenormand:"雷諾曼",runes:"北歐符文"};return "請以專業、客觀、深入的方式解讀以下占卜結果。請勿刻意討好或只給正面解釋，並清楚說明不確定性。\\n\\n占卜系統："+names[system]+"\\n問題："+($("question").value.trim()||"未提供")+
-"\\n牌陣："+$("spread").selectedOptions[0].textContent+"\\n日期："+new Date().toLocaleString("zh-TW")+"\\n\\n抽取結果：\\n"+lastDraw.map((c,i)=>(i+1)+". "+c.position+"："+c.name+"（"+(c.reversed?"逆位":"正位")+"），象徵："+c.meaning).join("\\n")+
-"\\n\\n請先分析牌與牌之間的組合，再解讀整體脈絡、主要矛盾、可能發展與實際建議。不要把象徵解讀當成確定事實。";}
+function makePrompt(){
+ const systemNames={tarot:"塔羅牌（Tarot）",lenormand:"雷諾曼（Lenormand）",runes:"古弗薩克／北歐符文（Elder Futhark runes）"};
+ const result=lastDraw.map((c,i)=>(i+1)+". 位置："+c.position+"｜牌／符文："+c.name+"（"+c.symbol+"）｜"+(system==="runes"?"抽取結果":"方向："+(c.reversed?"逆位":"正位"))+"｜網站提供的關鍵詞："+c.meaning).join("\n");
+ const common="請以繁體中文解讀，保持客觀、深入、清楚，不要刻意討好，也不要把象徵性解讀說成已證實的事實。\n\n占卜系統："+systemNames[system]+"\n問題："+($("question").value.trim()||"未提供")+"\n牌陣／配置："+$("spread").selectedOptions[0].textContent+"\n抽取日期："+new Date().toLocaleString("zh-TW")+"\n\n抽取結果：\n"+result+"\n\n";
+ let specialist="";
+ if(system==="tarot"){
+  specialist="【塔羅解讀要求】\n1. 先依牌陣位置逐張解讀，說明牌義如何回應該位置，而非只列關鍵字。\n2. 分析大阿爾克那與小阿爾克那比例、四花色分布、數字或宮廷牌重複等整體訊號。\n3. 若有逆位，說明它可能代表受阻、內化、延遲或失衡等不同可能，不要一律解成相反意思。\n4. 再整合牌與牌之間的呼應、衝突、因果線索與整體故事。\n5. 最後提供主要趨勢、盲點、可執行建議，以及哪些部分仍需現實資訊驗證。";
+ }else if(system==="lenormand"){
+  specialist="【雷諾曼解讀要求】\n1. 務必以組合閱讀為核心，不要把每張牌拆開後各自下結論。\n2. 先分析相鄰牌對（1+2、2+3，依此類推），說明兩張牌如何互相修飾、限定或改變語意。\n3. 三張／五張線性牌陣請讀出連續句意、中心牌重點及整條牌線的敘事；九宮格請分析中心、十字、對角線與周邊；大牌陣則先分區與主題，再看人物牌、距離、鄰接和重要組合。\n4. 牌義應依問題情境判斷，避免把單一牌（例如蛇、雲、棺材）直接等同某個確定人物或事件。\n5. 最後整理整體訊息、可能發展、需要留意的現實線索與務實建議。";
+ }else{
+  specialist="【符文解讀要求】\n1. 先辨認符文名稱與符號，依抽取位置解讀其在本次問題中的象徵作用。\n2. 分析符文之間的呼應、張力、順序與整體主題，不要只逐枚列出關鍵字。\n3. 清楚區分可由歷史文字、銘文與語言研究支持的內容，和近現代占卜／靈性傳統賦予的詮釋。\n4. 不要宣稱每枚符文都有唯一、古已有之且已被史料證實的占卜牌義；若歷史證據不足，請明確說明。\n5. 最後提供整體解讀、可能的提醒、可實踐的建議及不確定性。";
+ }
+ return common+specialist+"\n\n【輸出結構】\n一、整體結論\n二、位置與牌／符文的關係分析\n三、組合與整體脈絡\n四、可能發展與關鍵變數\n五、具體建議\n六、解讀限制與仍待確認之處";
+}
 function draw(){let n=Number($("count").value),d=shuffle(deck());lastDraw=d.slice(0,n).map((c,i)=>({...c,reversed:system!=="runes"&&$("reversals").checked&&Math.random()<.5,position:(positions[n]||[])[i]||("第"+(i+1)+"張") }));render();}
 function render(){
 $("cards").innerHTML="";lastDraw.forEach((c,i)=>{let w=document.createElement("div");w.className="card-wrap";let card=document.createElement("div");card.className="card";let inner=document.createElement("div");inner.className="inner";let back=document.createElement("div");back.className="back";back.innerHTML="<span>✧</span><small>DIVINATION</small>";let front=document.createElement("div");front.className="front"+(c.reversed?" rev":"");let sym=document.createElement("div");sym.className="symbol";sym.textContent=c.symbol;let name=document.createElement("strong");name.textContent=c.name;let orient=document.createElement("small");orient.textContent=c.reversed?"逆位":"正位";front.append(sym,name,orient);inner.append(back,front);card.append(inner);let pos=document.createElement("div");pos.className="position";pos.textContent=c.position;let meaning=document.createElement("div");meaning.className="meaning";meaning.textContent=c.meaning;w.append(card,pos,meaning);$("cards").append(w);setTimeout(()=>card.classList.add("flipped"),200+i*180);});
