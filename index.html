@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#43302E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>占卜工作室 | Divination Studio</title>
 <style>
 :root{--bg:#43302E;--panel:#43302E;--gold:#FFF1B5;--light:#C1DBE8;--text:#FFF1B5;--muted:#C1DBE8;--line:#735B57}
@@ -233,6 +236,19 @@ input,select,.prompt{
 .history-copy a{color:var(--gold);text-decoration:underline;text-underline-offset:3px}
 .history-note{padding:10px 12px;border-left:2px solid var(--gold);background:rgba(255,241,181,.06);border-radius:0 9px 9px 0;margin:14px 0}
 @media(max-width:520px){.history-dialog{padding:17px}.history-copy{font-size:13px}}
+
+
+/* Source Han Serif TC / Noto Serif TC bold typography */
+body,button,input,select,textarea{
+  font-family:"Noto Serif TC","Source Han Serif TC","Songti TC",serif !important;
+  font-weight:700 !important;
+}
+h1,.brand,header p,.heading,.result-title,label,
+.history-head h2,.history-copy h3,.history-tab,.history-close,
+.primary,.secondary,.position,.front strong,.front small,
+.meaning,.summary,.note,footer{
+  font-weight:700 !important;
+}
 
 </style>
 </head>
