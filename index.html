@@ -382,6 +382,10 @@ body{top:0!important}
 .front[data-system="runes"] strong{color:#f2cf79!important;text-shadow:0 0 9px rgba(218,171,70,.35)!important}
 
 
+.front[data-system="tarot"] .card-art img.tarot-major-art{
+ display:block;width:100%;height:100%;object-fit:cover;object-position:center;
+ border-radius:2px;filter:saturate(.88) contrast(1.02);
+}
 </style>
 </head>
 <body>
@@ -509,6 +513,14 @@ function makePrompt(){
  return common+specialist+"\n\n【輸出結構】\n一、整體結論\n二、位置與牌／符文的關係分析\n三、組合與整體脈絡\n四、可能發展與關鍵變數\n五、具體建議\n六、解讀限制與仍待確認之處";
 }
 const DIVINATION_ART_SPRITE="";
+const TAROT_MAJOR_ART={
+ "愚者":"00-fool.webp","魔術師":"01-magician.webp","女祭司":"02-high-priestess.webp","皇后":"03-empress.webp",
+ "皇帝":"04-emperor.webp","教皇":"05-hierophant.webp","戀人":"06-lovers.webp","戰車":"07-chariot.webp",
+ "力量":"08-strength.webp","隱者":"09-hermit.webp","命運之輪":"10-wheel-of-fortune.webp","正義":"11-justice.webp",
+ "倒吊人":"12-hanged-man.webp","死神":"13-death.webp","節制":"14-temperance.webp","惡魔":"15-devil.webp",
+ "高塔":"16-tower.webp","星星":"17-star.webp","月亮":"18-moon.webp","太陽":"19-sun.webp",
+ "審判":"20-judgement.webp","世界":"21-world.webp"
+};
 function cardArtwork(c,index){
  const hash=[...c.name].reduce((a,ch)=>a+ch.charCodeAt(0),0);
  const uid="art"+index;
@@ -519,6 +531,10 @@ function cardArtwork(c,index){
   const x=col*100/3;
   const y=row*100;
   return '<div class="deck-photo" role="img" aria-label="'+esc(c.name)+' 原創牌面插畫" style="background-image:url('+DIVINATION_ART_SPRITE+');background-size:400% 200%;background-position:'+x+'% '+y+'%"></div>';
+ }
+ if(system==="tarot"&&TAROT_MAJOR_ART[c.name]){
+  const file=TAROT_MAJOR_ART[c.name];
+  return '<img class="tarot-major-art" src="assets/tarot/'+file+'" alt="'+esc(c.name)+'塔羅牌古典油畫插畫" loading="eager" decoding="async">';
  }
  if(system==="runes"){
   const rune=esc(c.symbol||"ᚠ");
