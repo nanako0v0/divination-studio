@@ -391,10 +391,10 @@ body{top:0!important}
 
 /* Unified Rider–Waite–Smith card face: full artwork, square aligned frame */
 .card.tarot-card{aspect-ratio:.59/1!important}
-.front[data-system="tarot"]{position:relative!important;padding:0!important;overflow:hidden!important;border:2px solid #a88453!important;border-radius:9px!important;background:#e9d8b7!important;box-shadow:inset 0 0 0 1px rgba(255,248,226,.72),0 10px 24px rgba(0,0,0,.34)!important}
+.front[data-system="tarot"]{position:absolute!important;inset:0!important;padding:0!important;overflow:hidden!important;border:2px solid #a88453!important;border-radius:9px!important;background:#e9d8b7!important;box-shadow:inset 0 0 0 1px rgba(255,248,226,.72),0 10px 24px rgba(0,0,0,.34)!important}
 .front[data-system="tarot"]:before,.front[data-system="tarot"]:after{content:none!important;display:none!important}
 .front[data-system="tarot"] .card-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;background:#e9d8b7!important;box-shadow:none!important;overflow:hidden!important}
-.front[data-system="tarot"] .card-art img.tarot-rws-art{display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center!important;margin:0!important;padding:0!important;border:0!important;border-radius:5px!important;background:#e9d8b7!important;filter:saturate(.96) contrast(1.02)!important}
+.front[data-system="tarot"] .card-art img.tarot-rws-art{display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:center center!important;margin:0!important;padding:0!important;border:0!important;border-radius:5px!important;background:#e9d8b7!important;filter:saturate(.96) contrast(1.02)!important}
 .front[data-system="tarot"] strong,.front[data-system="tarot"] small{display:none!important}
 .front[data-system="tarot"].rev .card-art{transform:rotate(180deg)!important}
 </style>
@@ -545,7 +545,7 @@ function cardArtwork(c,index){
  }
  if(system==="tarot"&&TAROT_MAJOR_ART[c.name]){
   const file=TAROT_MAJOR_ART[c.name];
-  const imageUrl="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+encodeURIComponent(file);
+  const imageUrl="https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(file);
   return '<img class="tarot-rws-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 韋特塔羅完整場景插畫" loading="eager" decoding="async">';
  }
  if(system==="tarot"&&!TAROT_MAJOR_ART[c.name]){
