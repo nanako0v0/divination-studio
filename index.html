@@ -387,6 +387,7 @@ body{top:0!important}
  border-radius:2px;filter:saturate(.88) contrast(1.02);
 }
 .front .card-art img.tarot-minor-art{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#eee1c8;filter:sepia(.05) saturate(.92) contrast(1.02)}
+.front .card-art .lenormand-history-art{display:block;width:100%;height:100%;background-repeat:no-repeat;background-color:#e9dfcb;border:1px solid rgba(111,88,68,.35);border-radius:3px;box-shadow:inset 0 0 12px rgba(60,40,25,.12)}
 </style>
 </head>
 <body>
@@ -507,130 +508,14 @@ function makePrompt(){
  if(system==="tarot"){
   specialist="【塔羅解讀要求】\n1. 先依牌陣位置逐張解讀，說明牌義如何回應該位置，而非只列關鍵字。\n2. 分析大阿爾克那與小阿爾克那比例、四花色分布、數字或宮廷牌重複等整體訊號。\n3. 若有逆位，說明它可能代表受阻、內化、延遲或失衡等不同可能，不要一律解成相反意思。\n4. 再整合牌與牌之間的呼應、衝突、因果線索與整體故事。\n5. 最後提供主要趨勢、盲點、可執行建議，以及哪些部分仍需現實資訊驗證。";
  }else if(system==="lenormand"){
-  specialist="【雷諾曼解讀要求】\n1. 務必以組合閱讀為核心，不要把每張牌拆開後各自下結論。\n2. 先分析相鄰牌對（1+2、2+3，依此類推），說明兩張牌如何互相修飾、限定或改變語意。\n3. 三張／五張線性牌陣請讀出連續句意、中心牌重點及整條牌線的敘事；九宮格請分析中心、十字、對角線與周邊；大牌陣則先分區與主題，再看人物牌、距離、鄰接和重要組合。\n4. 牌義應依問題情境判斷，避免把單一牌（例如蛇、雲、棺材）直接等同某個確定人物或事件。\n5. 最後整理整體訊息、可能發展、需要留意的現實線索與務實建議。";
- }else{
-  specialist="【符文解讀要求】\n1. 先辨認符文名稱與符號，依抽取位置解讀其在本次問題中的象徵作用。\n2. 分析符文之間的呼應、張力、順序與整體主題，不要只逐枚列出關鍵字。\n3. 清楚區分可由歷史文字、銘文與語言研究支持的內容，和近現代占卜／靈性傳統賦予的詮釋。\n4. 不要宣稱每枚符文都有唯一、古已有之且已被史料證實的占卜牌義；若歷史證據不足，請明確說明。\n5. 最後提供整體解讀、可能的提醒、可實踐的建議及不確定性。";
- }
- return common+specialist+"\n\n【輸出結構】\n一、整體結論\n二、位置與牌／符文的關係分析\n三、組合與整體脈絡\n四、可能發展與關鍵變數\n五、具體建議\n六、解讀限制與仍待確認之處";
-}
-const DIVINATION_ART_SPRITE="";
-const TAROT_MAJOR_ART={
- "愚者":"00-fool.webp","魔術師":"01-magician.webp","女祭司":"02-high-priestess.webp","皇后":"03-empress.webp",
- "皇帝":"04-emperor.webp","教皇":"05-hierophant.webp","戀人":"06-lovers.webp","戰車":"07-chariot.webp",
- "力量":"08-strength.webp","隱者":"09-hermit.webp","命運之輪":"10-wheel-of-fortune.webp","正義":"11-justice.webp",
- "倒吊人":"12-hanged-man.webp","死神":"13-death.webp","節制":"14-temperance.webp","惡魔":"15-devil.webp",
- "高塔":"16-tower.webp","星星":"17-star.webp","月亮":"18-moon.webp","太陽":"19-sun.webp",
- "審判":"20-judgement.webp","世界":"21-world.webp"
-};
-function cardArtwork(c,index){
- const hash=[...c.name].reduce((a,ch)=>a+ch.charCodeAt(0),0);
- const uid="art"+index;
- const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
- const photoMap={};
- if(photoMap[c.name]){
-  const [col,row]=photoMap[c.name];
-  const x=col*100/3;
-  const y=row*100;
-  return '<div class="deck-photo" role="img" aria-label="'+esc(c.name)+' 原創牌面插畫" style="background-image:url('+DIVINATION_ART_SPRITE+');background-size:400% 200%;background-position:'+x+'% '+y+'%"></div>';
- }
- if(system==="tarot"&&TAROT_MAJOR_ART[c.name]){
-  const file=TAROT_MAJOR_ART[c.name];
-  return '<img class="tarot-major-art" src="assets/tarot/'+file+'" alt="'+esc(c.name)+'塔羅牌古典油畫插畫" loading="eager" decoding="async">';
- }
- if(system==="tarot"&&!TAROT_MAJOR_ART[c.name]){
-  const parts=c.name.split("・"),suitName=parts[0],rankName=parts[1]||"Ace";
-  const suitFiles={"權杖":"Wands","聖杯":"Cups","寶劍":"Swords","錢幣":"Pents"};
-  const rankFiles={"Ace":"01","二":"02","三":"03","四":"04","五":"05","六":"06","七":"07","八":"08","九":"09","十":"10","侍者":"11","騎士":"12","皇后":"13","國王":"14"};
-  const imageFile=(suitFiles[suitName]||"Wands")+(rankFiles[rankName]||"01")+".jpg";
-  const imageUrl="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+imageFile;
-  return '<img class="tarot-minor-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 塔羅完整牌面插畫" loading="eager" decoding="async">';
- }
- if(system==="runes"){
-  const rune=esc(c.symbol||"ᚠ");
-  return '<svg viewBox="0 0 120 150" role="img" aria-label="'+esc(c.name)+' 北歐符文金刻牌面" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'stone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#201b15"/><stop offset=".48" stop-color="#0c0b09"/><stop offset="1" stop-color="#050505"/></linearGradient><linearGradient id="'+uid+'gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0d18a"/><stop offset=".5" stop-color="#b58a43"/><stop offset="1" stop-color="#80602d"/></linearGradient><filter id="'+uid+'rough"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="2"/><feColorMatrix values="0 0 0 0 .6 0 0 0 0 .55 0 0 0 0 .45 0 0 0 .14 0"/></filter></defs><rect x="3" y="3" width="114" height="144" rx="7" fill="#030303" stroke="url(#'+uid+'gold)" stroke-width="1.5"/><rect x="8" y="8" width="104" height="134" rx="4" fill="url(#'+uid+'stone)" stroke="#9a783d" stroke-width=".8"/><path d="M15 33V15h18M87 15h18v18M15 117v18h18m54 0h18v-18" fill="none" stroke="url(#'+uid+'gold)" stroke-width="1.4"/><path d="M18 22q8 0 8 8m76-8q-8 0-8 8M18 128q8 0 8-8m76 8q-8 0-8-8" fill="none" stroke="#b58a43" stroke-width="1"/><path d="M60 25V121" stroke="#9e793c" stroke-opacity=".24" stroke-width=".8"/><rect x="25" y="29" width="70" height="88" rx="3" fill="#0a0907" stroke="#72562d" stroke-opacity=".7"/><text x="60" y="91" text-anchor="middle" font-family="serif" font-size="68" fill="url(#'+uid+'gold)" stroke="#5c431f" stroke-width=".8" paint-order="stroke">'+rune+'</text><path d="M39 121h42" stroke="#b58a43" stroke-width=".8"/><text x="60" y="134" text-anchor="middle" font-family="Georgia,serif" font-size="7" letter-spacing="2" fill="#d7b66e">'+esc(c.name.toUpperCase())+'</text><rect x="5" y="5" width="110" height="140" filter="url(#'+uid+'rough)" opacity=".32"/></svg>';
- }
- if(system==="lenormand"){
-  const pastel=[["#d8c5a1","#77836b","#f2e6cf"],["#d7b9a8","#986b60","#f2e3cf"],["#b9c2c4","#637b7b","#e9dfca"],["#d5c39d","#a0804f","#f4e7cc"],["#c4cbb9","#75836c","#eee2ca"]];
-  const p=pastel[hash%pastel.length];
-  const symbols={
-   "騎士":'<path d="M27 91q8-29 36-26l17 11-4 24H38Z" fill="#76513c"/><path d="M57 65q-4-18 11-22l13 7-5 16" fill="#d4a77b"/><path d="M64 46l-4-13 13 8 10-2-5 13" fill="#76513c"/><path d="M35 100l-5 15m38-15 5 15" stroke="#604431" stroke-width="5"/><path d="M22 63q-7-13 4-20" fill="none" stroke="#b77d78" stroke-width="3"/>',
-   "幸運草":'<path d="M60 83V115" stroke="#527b58" stroke-width="4"/><g fill="#78a86c" stroke="#4e7952" stroke-width="1.5"><circle cx="48" cy="60" r="15"/><circle cx="72" cy="60" r="15"/><circle cx="48" cy="82" r="15"/><circle cx="72" cy="82" r="15"/></g><circle cx="60" cy="71" r="5" fill="#f5df9e"/>',
-   "船":'<path d="M24 87h72l-13 23H40Z" fill="#9c674b" stroke="#6d4a3a" stroke-width="2"/><path d="M60 34v52M60 38L34 78h26Z" fill="#fff0d2" stroke="#b98d62" stroke-width="2"/><path d="M64 43L87 79H64Z" fill="#c47e72"/><path d="M19 119q15-9 30 0t30 0 25 0" fill="none" stroke="#6d9ca2" stroke-width="3"/>',
-   "房子":'<path d="M25 68L60 39 95 68v48H25Z" fill="#d9a36f" stroke="#895e48" stroke-width="2"/><path d="M19 69L60 30 101 69" fill="none" stroke="#8a5946" stroke-width="7"/><rect x="50" y="82" width="20" height="34" fill="#79523f"/><rect x="33" y="75" width="13" height="15" fill="#f7e8bd"/><rect x="75" y="75" width="13" height="15" fill="#f7e8bd"/>',
-   "樹":'<path d="M60 76v43" stroke="#80573e" stroke-width="9"/><g fill="#71966d" stroke="#4d7658" stroke-width="2"><circle cx="60" cy="49" r="24"/><circle cx="42" cy="66" r="18"/><circle cx="78" cy="66" r="18"/></g><circle cx="53" cy="43" r="5" fill="#f3e0aa"/>',
-   "雲":'<path d="M28 86q-8-22 15-27 8-26 32-12 18-1 18 21 20 13 3 29H37q-12 0-9-11Z" fill="#fff5df" stroke="#8798b0" stroke-width="3"/><path d="M38 106l-5 10m26-10-5 10m27-10-5 10" stroke="#8da8c1" stroke-width="3"/>',
-   "蛇":'<path d="M28 104q-8-29 21-31t15-27q-1-20 22-16" fill="none" stroke="#64855c" stroke-width="12" stroke-linecap="round"/><path d="M80 29l12 1-7 10" fill="#64855c"/><circle cx="85" cy="31" r="2" fill="#f7e8c7"/><path d="M31 105q-7 9 4 13" fill="none" stroke="#64855c" stroke-width="5"/>',
-   "棺材":'<rect x="33" y="43" width="54" height="70" rx="5" fill="#8a5b50" stroke="#ead5ae" stroke-width="3"/><path d="M43 54h34v48H43Z" fill="#c99b78"/><path d="M60 59v34m-11-17h22" stroke="#f2e2c3" stroke-width="4"/>',
-   "花束":'<path d="M60 76l-9 40m9-40 16 40" stroke="#66865c" stroke-width="4"/><g fill="#d98e91" stroke="#fff0d5" stroke-width="1.5"><circle cx="43" cy="57" r="12"/><circle cx="60" cy="43" r="13"/><circle cx="78" cy="58" r="12"/><circle cx="59" cy="67" r="12"/></g><path d="M44 95q16-15 32 0l-8 18H52Z" fill="#b77d78"/>',
-   "鐮刀":'<path d="M34 109q37-9 54-65-2 43-34 62-10 6-20 3Z" fill="#d8d9d0" stroke="#7a8c8b" stroke-width="2"/><path d="M42 102l-8 22" stroke="#8e6146" stroke-width="7"/>',
-   "鞭子":'<path d="M35 111Q67 83 82 35" fill="none" stroke="#79543d" stroke-width="7" stroke-linecap="round"/><path d="M82 35q13 12 5 28M82 35q-13 12-6 27" fill="none" stroke="#b58a5d" stroke-width="3" stroke-linecap="round"/><path d="M29 112l-6 12m17-17 5 13" stroke="#79543d" stroke-width="5" stroke-linecap="round"/>',
-   "鳥":'<path d="M29 81q17-29 35-5 17-20 31 1-16 31-42 16-14 5-24-12Z" fill="#8ba8ad" stroke="#536e78" stroke-width="2"/><path d="M59 81l-7 29m8-29 19 23" stroke="#76523e" stroke-width="3"/><circle cx="73" cy="79" r="2" fill="#423a33"/>',
-   "小孩":'<circle cx="60" cy="47" r="16" fill="#e5b78c"/><path d="M44 44q5-24 29-12l5 17q-16-11-34-5Z" fill="#8a6049"/><path d="M42 111l5-39q13-12 26 0l5 39Z" fill="#9c9fc2"/><path d="M47 83l-16 17m42-17 16 17" stroke="#e5b78c" stroke-width="7"/>',
-   "狐狸":'<path d="M34 99q3-38 29-40 22-1 26 28-15 27-55 12Z" fill="#c77d4d"/><path d="M37 64l-8-25 23 15m26 0 19-15-5 29" fill="#c77d4d"/><path d="M48 83q12-11 25 0l-12 15Z" fill="#f4e5c9"/><circle cx="52" cy="73" r="2"/><circle cx="74" cy="73" r="2"/>',
-   "熊":'<circle cx="60" cy="75" r="31" fill="#9a6b4d"/><circle cx="39" cy="50" r="12" fill="#9a6b4d"/><circle cx="81" cy="50" r="12" fill="#9a6b4d"/><ellipse cx="60" cy="83" rx="17" ry="13" fill="#e5c49a"/><circle cx="49" cy="69" r="3"/><circle cx="71" cy="69" r="3"/><ellipse cx="60" cy="79" rx="5" ry="4" fill="#55443a"/>',
-   "星星":'<path d="M60 30l9 23 24 1-19 15 7 24-21-14-21 14 7-24-19-15 24-1Z" fill="#f2d47d" stroke="#b58b49" stroke-width="2"/>',
-   "鸛鳥":'<path d="M38 104q9-35 27-46l12-20 7 4-9 23q15 16 3 39" fill="none" stroke="#6e8791" stroke-width="7"/><path d="M75 39l18-7-12 14" fill="#bd806d"/><path d="M40 105l-8 14m35-20 7 17" stroke="#7a604b" stroke-width="3"/>',
-   "狗":'<path d="M35 61q0-17 19-18l22 8 12 26-10 30H43L30 83Z" fill="#b9825c"/><path d="M39 54L25 40 28 71m51-17 15-12-3 31" fill="#8c5d47"/><circle cx="50" cy="70" r="2"/><circle cx="72" cy="70" r="2"/><path d="M54 85q7 6 14 0" fill="none" stroke="#614737" stroke-width="2"/>',
-   "高塔":'<path d="M36 113V53h48v60Z" fill="#9e9bb1" stroke="#655f7b" stroke-width="2"/><path d="M30 53l30-25 30 25Z" fill="#786d86"/><path d="M48 69h10v17H48m17-17h10v17H65" fill="#e9dcbf"/>',
-   "花園":'<path d="M22 113q38-24 76 0" fill="none" stroke="#6d8a62" stroke-width="5"/><g fill="#d98f9a"><circle cx="36" cy="78" r="9"/><circle cx="60" cy="62" r="11"/><circle cx="84" cy="78" r="9"/></g><g fill="#f3d889"><circle cx="36" cy="78" r="3"/><circle cx="60" cy="62" r="4"/><circle cx="84" cy="78" r="3"/></g>',
-   "山":'<path d="M17 111l32-66 16 30 13-20 27 56Z" fill="#8a91a0" stroke="#f1e6d2" stroke-width="3"/><path d="M49 45l10 22-13-5m32-7 8 18-13-4" fill="#fff3de"/>',
-   "岔路":'<path d="M60 119V75m0 0L35 42m25 33 26-33" fill="none" stroke="#8b694d" stroke-width="7" stroke-linecap="round"/><path d="M28 44l7-15 8 15m39 0 8-15 8 15" fill="none" stroke="#8b694d" stroke-width="4"/>',
-   "老鼠":'<ellipse cx="60" cy="82" rx="25" ry="19" fill="#9a8b86"/><circle cx="42" cy="65" r="11" fill="#c49b9b"/><circle cx="76" cy="65" r="11" fill="#c49b9b"/><circle cx="52" cy="78" r="2"/><circle cx="68" cy="78" r="2"/><path d="M84 89q22 8 12 22" fill="none" stroke="#9a8b86" stroke-width="3"/>',
-   "心":'<path d="M60 112 26 77Q12 47 39 43q15-1 21 15 9-16 24-15 27 4 10 34Z" fill="#cf7e80" stroke="#a45d66" stroke-width="3"/>',
-   "戒指":'<ellipse cx="60" cy="79" rx="25" ry="30" fill="none" stroke="#d2ad61" stroke-width="9"/><path d="M60 40l8 9-8 10-8-10Z" fill="#a9c5c1" stroke="#fff0d2" stroke-width="2"/>',
-   "書":'<path d="M22 47q20-8 38 5 18-13 38-5v63q-20-8-38 5-18-13-38-5Z" fill="#b77d78" stroke="#fff0d5" stroke-width="3"/><path d="M60 52v58M32 65h20m-20 10h20m16-10h20m-20 10h20" stroke="#f6e9ce" stroke-width="2"/>',
-   "信":'<rect x="24" y="49" width="72" height="55" rx="5" fill="#f4e5c7" stroke="#b58a5d" stroke-width="3"/><path d="M26 53l34 28 34-28" fill="none" stroke="#b77d78" stroke-width="3"/>',
-   "男人":'<circle cx="60" cy="46" r="15" fill="#d7aa83"/><path d="M42 45q5-24 35-12l3 18q-20-10-38-6Z" fill="#57453e"/><path d="M34 113q3-45 26-45t26 45Z" fill="#71849c"/>',
-   "女人":'<circle cx="60" cy="46" r="15" fill="#e3b994"/><path d="M43 49q-5-28 17-28t18 28l-6 20H48Z" fill="#79564b"/><path d="M31 114q6-42 29-42t29 42Z" fill="#a97891"/>',
-   "百合":'<path d="M60 110V65" stroke="#658b63" stroke-width="4"/><path d="M60 72Q27 63 42 40q12-5 18 22 6-27 18-22 15 23-18 32Z" fill="#fff1db" stroke="#d6bd91" stroke-width="2"/>',
-   "太陽":'<circle cx="60" cy="74" r="24" fill="#f1ca6f" stroke="#d99a4d" stroke-width="3"/><path d="M60 30v13m0 62v13M16 74h13m62 0h13M29 43l9 9m44 44 9 9m0-62-9 9m-44 44-9 9" stroke="#d99a4d" stroke-width="4"/>',
-   "月亮":'<path d="M75 34q-32 8-25 42 7 31 39 25-24 24-48 2-25-24-3-54 15-18 37-15Z" fill="#e8d5a3" stroke="#a78a65" stroke-width="2"/>',
-   "鑰匙":'<circle cx="43" cy="64" r="15" fill="none" stroke="#d3ad61" stroke-width="8"/><path d="M57 74l34 34m-12-12 10-10m-20 0 10-10" stroke="#d3ad61" stroke-width="8" stroke-linecap="round"/>',
-   "魚":'<path d="M22 78q35-40 70 0-35 40-70 0Z" fill="#8db4b7" stroke="#527d85" stroke-width="3"/><path d="M22 78L9 58v40Z" fill="#8db4b7"/><circle cx="73" cy="72" r="3" fill="#344b50"/>',
-   "錨":'<path d="M60 35v70M44 50h32M31 79q0 31 29 31t29-31M60 28l-9 10m9-10 9 10" fill="none" stroke="#7b8990" stroke-width="6" stroke-linecap="round"/>',
-   "十字架":'<path d="M60 33v78M37 59h46" stroke="#8a705c" stroke-width="13" stroke-linecap="round"/><path d="M60 33v78M37 59h46" stroke="#d8c19a" stroke-width="2"/>'
-  };
-  const settings={
-   "騎士":'<path d="M8 104q20-18 39 0t65 0v30H8Z" fill="#71845e"/><path d="M13 91q13-29 25-13m-7 13q10-26 21-12" fill="none" stroke="#526d4e" stroke-width="3"/><path d="M89 42l8-17 8 17" fill="#8a9a83"/>',
-   "幸運草":'<path d="M8 110q24-26 48-8t56-8v38H8Z" fill="#73865c"/><g stroke="#55744c" stroke-width="2"><path d="M22 108v-25m23 25V70m48 39V79"/></g><g fill="#f4e8bd"><circle cx="22" cy="78" r="2"/><circle cx="45" cy="64" r="2"/><circle cx="93" cy="73" r="2"/></g>',
-   "船":'<path d="M8 94q25-12 51 0t53 0v42H8Z" fill="#72969a"/><path d="M8 108q25-10 51 0t53 0M8 120q25-10 51 0t53 0" fill="none" stroke="#d8e0d2" stroke-width="2"/><path d="M13 49h22m-17-8 12 8-12 8" fill="none" stroke="#f3e5c9" stroke-width="2"/>',
-   "房子":'<path d="M8 111q25-16 50-5t54-5v34H8Z" fill="#84916a"/><path d="M11 72h19V48h-19m72 24h18V48H83" fill="#a8a17e" opacity=".7"/><path d="M8 46q24-19 49 0t55 0" fill="none" stroke="#f3e4c7" stroke-width="2"/>',
-   "樹":'<path d="M8 112q20-19 42-5t62-5v33H8Z" fill="#687c5a"/><path d="M15 8v90m90-90v90" stroke="#755b40" stroke-width="8"/><g fill="#6d8764"><circle cx="17" cy="29" r="18"/><circle cx="103" cy="30" r="19"/></g>',
-   "雲":'<path d="M8 107q25-20 52-5t52-6v38H8Z" fill="#73808b"/><path d="M8 26q20-17 38 0m34-9q20-16 34 1" fill="none" stroke="#f4eadb" stroke-width="3"/><path d="M16 115l-5 12m34-11-5 12m45-12-5 12" stroke="#9bb1bc" stroke-width="2"/>',
-   "蛇":'<path d="M8 113q26-20 49-4t55-8v33H8Z" fill="#74865e"/><path d="M16 22q20 18 0 37m88-40q-18 20 0 39" fill="none" stroke="#526c4b" stroke-width="5"/><g fill="#d9d0a8"><circle cx="17" cy="17" r="3"/><circle cx="104" cy="18" r="3"/></g>',
-   "棺材":'<path d="M8 108q26-15 52-4t52-5v35H8Z" fill="#66665a"/><path d="M15 18v28m90-28v28M15 18h90" stroke="#8e765e" stroke-width="3"/><circle cx="60" cy="22" r="7" fill="#d6c29a" opacity=".55"/>',
-   "花束":'<path d="M8 113q22-19 45-5t59-8v34H8Z" fill="#71865e"/><g fill="#d99a94"><circle cx="20" cy="32" r="6"/><circle cx="100" cy="44" r="7"/><circle cx="26" cy="83" r="5"/></g><g stroke="#68835c" stroke-width="2"><path d="M20 38v34m80-21v29M26 88v22"/></g>',
-   "鐮刀":'<path d="M8 112q22-18 49-5t55-8v35H8Z" fill="#7b875e"/><path d="M12 91q8-25 15-35m-8 39q11-22 20-26m52 32q8-23 16-32" stroke="#d6c69d" stroke-width="2"/><path d="M15 20l10-9 10 9" fill="none" stroke="#9a815c" stroke-width="2"/>',
-   "鞭子":'<path d="M8 112q25-22 50-6t54-5v33H8Z" fill="#7a765f"/><path d="M14 25q22 12 0 28m92-28q-22 12 0 28" fill="none" stroke="#9b8060" stroke-width="3"/><path d="M15 68h90" stroke="#d9c6a0" stroke-opacity=".5"/>',
-   "鳥":'<path d="M8 112q25-17 50-4t54-6v32H8Z" fill="#7d8a69"/><path d="M8 30q20-16 38 0m30-7q18-16 36 0" fill="none" stroke="#e6dfc9" stroke-width="2"/><path d="M14 82l14-25 14 25m44 0 14-25 14 25" fill="none" stroke="#6b7658" stroke-width="3"/>',
-   "小孩":'<path d="M8 112q24-20 49-5t55-5v33H8Z" fill="#83a06f"/><path d="M13 30q18-16 36 0m22 0q18-16 36 0" fill="none" stroke="#f2e4c6" stroke-width="2"/><g fill="#e4c38e"><circle cx="17" cy="95" r="3"/><circle cx="100" cy="90" r="3"/></g>',
-   "狐狸":'<path d="M8 111q25-18 52-4t52-6v33H8Z" fill="#8d7758"/><path d="M12 18l12 18 12-18m60 0 12 18 12-18" fill="#c88759" opacity=".7"/><g fill="#6d805b"><circle cx="15" cy="76" r="12"/><circle cx="105" cy="72" r="14"/></g>',
-   "熊":'<path d="M8 112q25-20 50-5t54-6v33H8Z" fill="#6c7756"/><path d="M12 18v82m96-82v82" stroke="#725a43" stroke-width="7"/><g fill="#73895f"><circle cx="15" cy="25" r="17"/><circle cx="105" cy="25" r="17"/></g>',
-   "星星":'<path d="M8 110q24-18 52-4t52-6v34H8Z" fill="#5e7080"/><g fill="#f4e8c8"><circle cx="17" cy="22" r="2"/><circle cx="42" cy="33" r="2"/><circle cx="96" cy="17" r="2"/><circle cx="105" cy="56" r="2"/><circle cx="23" cy="62" r="2"/></g><path d="M8 90q25-13 50 0t54 0" fill="none" stroke="#d5c7a6" stroke-width="1.5"/>',
-   "鸛鳥":'<path d="M8 111q25-20 50-5t54-6v33H8Z" fill="#728c83"/><path d="M15 19v48m90-48v48" stroke="#7e694e" stroke-width="4"/><path d="M10 68q20-15 40 0t60 0" fill="none" stroke="#d8e0ce" stroke-width="2"/>',
-   "狗":'<path d="M8 112q23-20 49-5t55-5v32H8Z" fill="#7b8b68"/><path d="M12 28h24v-9h-24m72 9h24v-9H84" fill="none" stroke="#e9dfc9" stroke-width="2"/><circle cx="17" cy="91" r="4" fill="#e2c18b"/><circle cx="103" cy="91" r="4" fill="#e2c18b"/>',
-   "高塔":'<path d="M8 112q25-15 52-4t52-5v32H8Z" fill="#8b8c91"/><path d="M13 36h20V17H13m74 19h20V17H87" fill="none" stroke="#ded4c1" stroke-width="3"/><path d="M8 50h104" stroke="#706c76" stroke-width="2"/>',
-   "花園":'<path d="M8 112q25-16 52-4t52-5v32H8Z" fill="#6f885f"/><path d="M12 29q48-22 96 0" fill="none" stroke="#6d7f5a" stroke-width="5"/><g fill="#e1a2a0"><circle cx="17" cy="82" r="5"/><circle cx="103" cy="82" r="5"/></g>',
-   "山":'<path d="M8 112L30 66l15 22 18-51 22 43 13-16 14 48Z" fill="#8b9193"/><path d="M52 50l11-13 10 18-10-4Z" fill="#f2eadb"/><path d="M8 112h104" stroke="#6e7b7a" stroke-width="3"/>',
-   "岔路":'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#8a8b6b"/><path d="M60 119V76M60 76L29 35m31 41 31-41" fill="none" stroke="#7b6347" stroke-width="4"/><path d="M23 35h12m-6-6 6 6-6 6m52-6h12m-6-6 6 6-6 6" stroke="#e9ddc3" stroke-width="2" fill="none"/>',
-   "老鼠":'<path d="M8 112q25-20 52-5t52-5v32H8Z" fill="#827c70"/><path d="M13 27l9 10m85-10-9 10" stroke="#d8c7ad" stroke-width="3"/><g fill="#d5c2aa"><circle cx="16" cy="92" r="3"/><circle cx="104" cy="92" r="3"/></g>',
-   "心":'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#8d7b68"/><g fill="#d99591"><circle cx="16" cy="29" r="6"/><circle cx="104" cy="29" r="6"/></g><path d="M16 35v28m88-28v28" stroke="#71845f" stroke-width="2"/>',
-   "戒指":'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#9a8965"/><path d="M13 26h94M13 33h94" stroke="#d9c28f" stroke-width="2"/><g fill="#d7c18b"><circle cx="17" cy="47" r="3"/><circle cx="103" cy="47" r="3"/></g>',
-   "書":'<path d="M8 112q25-16 52-4t52-5v32H8Z" fill="#79685a"/><path d="M13 20h25v22H13m69-22h25v22H82" fill="none" stroke="#e9ddc5" stroke-width="2"/><path d="M17 25h17m52 0h17" stroke="#ad8d66" stroke-width="1"/>',
-   "信":'<path d="M8 112q25-16 52-4t52-5v32H8Z" fill="#8a8b73"/><path d="M12 30q48-25 96 0" fill="none" stroke="#f2e7d1" stroke-width="2"/><path d="M15 45h90" stroke="#a98a66" stroke-width="1.5"/>',
-   "男人":'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#778a7e"/><path d="M12 20q48-18 96 0" fill="none" stroke="#e8ddc6" stroke-width="2"/><path d="M18 112V72m84 40V72" stroke="#6c765d" stroke-width="4"/>',
-   "女人":'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#9a8290"/><path d="M12 20q48-18 96 0" fill="none" stroke="#f0e3d2" stroke-width="2"/><g fill="#d9a2a1"><circle cx="18" cy="42" r="5"/><circle cx="102" cy="42" r="5"/></g>',
-   "百合":'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#7c8969"/><path d="M15 17v95m90-95v95" stroke="#70845c" stroke-width="3"/><g fill="#f4ead4"><circle cx="15" cy="20" r="5"/><circle cx="105" cy="20" r="5"/></g>',
-   "太陽":'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#a18a58"/><path d="M10 30h100" stroke="#f3dfad" stroke-width="2"/><g fill="#f6df9c"><circle cx="17" cy="48" r="3"/><circle cx="103" cy="48" r="3"/></g>',
-   "月亮":'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#6e7581"/><g fill="#f1e7d2"><circle cx="16" cy="25" r="2"/><circle cx="103" cy="34" r="2"/><circle cx="25" cy="57" r="2"/></g><path d="M8 91q25-15 52 0t52 0" fill="none" stroke="#c8c5bd" stroke-width="1.5"/>',
-   "鑰匙":'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#8b805f"/><path d="M12 26h96M12 34h96" stroke="#d6bd84" stroke-width="2"/><path d="M20 40v24m80-24v24" stroke="#7b694c" stroke-width="2"/>',
-   "魚":'<path d="M8 92q25-15 52 0t52 0v52H8Z" fill="#71999b"/><path d="M8 105q25-12 52 0t52 0m-104 12q25-12 52 0t52 0" fill="none" stroke="#d8e4d7" stroke-width="2"/><circle cx="20" cy="34" r="8" fill="#e9d9b9" opacity=".7"/>',
-   "錨":'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#6d8790"/><path d="M8 118q25-12 52 0t52 0" fill="none" stroke="#dce5db" stroke-width="2"/><path d="M13 25h94" stroke="#d6c8aa" stroke-width="2"/>',
-   "十字架":'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#77766b"/><path d="M14 25h92M14 31h92" stroke="#c8b99d" stroke-width="2"/><circle cx="60" cy="22" r="12" fill="#d7c6a4" opacity=".35"/>'
-  };
-  const setting=settings[c.name]||'<path d="M8 112q25-17 52-4t52-5v32H8Z" fill="#77866a"/>';
-  const art=symbols[c.name]||'<circle cx="60" cy="75" r="29" fill="#e6d6ad" stroke="#b88d5a" stroke-width="3"/><path d="M60 55v40m-18-20h36" stroke="#b88d5a" stroke-width="3"/>';
-  return '<svg viewBox="0 0 120 150" role="img" aria-label="'+esc(c.name)+' 完整場景雷諾曼插畫" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+p[0]+'"/><stop offset=".62" stop-color="'+p[2]+'"/><stop offset="1" stop-color="#d8c7a8"/></linearGradient><linearGradient id="'+uid+'gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4e6c7"/><stop offset="1" stop-color="#a8895e"/></linearGradient></defs><rect x="3" y="3" width="114" height="144" rx="7" fill="#f0e3ca" stroke="#6f5844" stroke-width="1.5"/><rect x="7" y="7" width="106" height="136" rx="5" fill="url(#'+uid+'sky)" stroke="#f7ecd5" stroke-width="1.5"/><g>'+setting+'</g><circle cx="93" cy="25" r="10" fill="#fff3d7" opacity=".62"/><g fill="#fff5dc" opacity=".86"><path d="M22 25l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z"/><path d="M91 59l2 4 4 2-4 2-2 4-2-4-4-2 4-2Z"/><circle cx="35" cy="42" r="1.5"/></g><ellipse cx="60" cy="78" rx="43" ry="48" fill="#f8ecd6" fill-opacity=".12" stroke="#fff5df" stroke-opacity=".55" stroke-width=".8"/>'+art+'<g fill="none" stroke="#fff5df" stroke-opacity=".68" stroke-width=".8"><path d="M13 31Q27 18 41 31T69 31 97 31M13 119q14-13 28 0t28 0 28 0"/><path d="M60 15l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z"/></g><rect x="8" y="8" width="104" height="134" rx="5" fill="none" stroke="url(#'+uid+'gold)" stroke-width="2"/><rect x="13" y="13" width="94" height="124" rx="3" fill="none" stroke="#795f43" stroke-opacity=".55" stroke-width=".7"/><path d="M13 15q8 8 0 16m94-16q-8 8 0 16M13 135q8-8 0-16m94 16q-8-8 0-16" fill="none" stroke="#795f43" stroke-width="1.5"/><rect x="38" y="125" width="44" height="12" rx="5" fill="#f2e6d0" stroke="#987c57" stroke-width=".7"/><text x="60" y="133.5" text-anchor="middle" font-family="serif" font-size="6.5" letter-spacing=".7" fill="#554331">'+esc(c.name)+'</text></svg>';
+  const lenormandOrder=["騎士","幸運草","船","房子","樹","雲","蛇","棺材","花束","鐮刀","鞭子","鳥","小孩","狐狸","熊","星星","鸛鳥","狗","高塔","花園","山","岔路","老鼠","心","戒指","書","信","男人","女人","百合","太陽","月亮","鑰匙","魚","錨","十字架"];
+  const cardNo=lenormandOrder.indexOf(c.name);
+  if(cardNo>=0){
+   const col=cardNo%6,row=Math.floor(cardNo/6);
+   const x=col*20,y=row*20;
+   const sheet="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png/1920px-Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png";
+   return '<div class="lenormand-history-art" role="img" aria-label="'+esc(c.name)+' 1799 年《希望遊戲》古典牌面" style="background-image:url('+sheet+');background-size:600% 600%;background-position:'+x+'% '+y+'%"></div>';
+  }
  }
  const palette=[["#b7a17e","#5b493c","#253b36","#e5d3ad"],["#9c9cae","#51475f","#283847","#e8d9c1"],["#c4a16f","#80513f","#3d4b39","#ead8b5"],["#a8b8b1","#536d68","#293d42","#e9d9bc"]];
  const p=palette[hash%palette.length];
