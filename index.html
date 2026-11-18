@@ -590,7 +590,7 @@ function cardArtwork(c,index){
  if(system==="tarot"&&TAROT_MAJOR_ART[c.name]){
   const file=TAROT_MAJOR_ART[c.name];
   const imageUrl="assets/tarot/"+file;
-  return '<img class="tarot-rws-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 韋特塔羅完整場景插畫" loading="lazy" decoding="async" fetchpriority="low">';
+  return '<img class="tarot-rws-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 韋特塔羅完整場景插畫" loading="eager" decoding="async" fetchpriority="high">';
  }
  if(system==="tarot"&&!TAROT_MAJOR_ART[c.name]){
   const parts=c.name.split("・"),suitName=parts[0],rankName=parts[1]||"Ace";
@@ -642,19 +642,9 @@ function googleTranslateElementInit(){
   new google.translate.TranslateElement({pageLanguage:"zh-TW",includedLanguages:"zh-CN,en,ja,ko",autoDisplay:false}, "google_translate_element");
  }
 }
-let googleTranslateLoading=false;
-function loadGoogleTranslate(){
- if(googleTranslateLoading||(window.google&&google.translate))return;
- googleTranslateLoading=true;
- const script=document.createElement("script");
- script.src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
- script.async=true;
- document.head.appendChild(script);
-}
 function setSiteLanguage(language){
- document.documentElement.lang=language;
- if(language!=="zh-TW")loadGoogleTranslate();
  const combo=document.querySelector(".goog-te-combo");
+ document.documentElement.lang=language;
  if(language==="zh-TW"){
   document.cookie="googtrans=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
   document.cookie="googtrans=/zh-TW/zh-TW;path=/";
@@ -669,7 +659,12 @@ function setSiteLanguage(language){
  }
 }
 $("siteLanguage").addEventListener("change",e=>setSiteLanguage(e.target.value));
-// Google 翻譯改為使用者選擇其他語言時才載入，減少首頁初始請求。
+(function loadGoogleTranslate(){
+ const script=document.createElement("script");
+ script.src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+ script.async=true;
+ document.head.appendChild(script);
+})();
 </script>
 </body>
 </html>
