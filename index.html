@@ -559,8 +559,8 @@ function cardArtwork(c,index){
   const suitFiles={"權杖":"Wands","聖杯":"Cups","寶劍":"Swords","錢幣":"Pents"};
   const rankFiles={"Ace":"01","二":"02","三":"03","四":"04","五":"05","六":"06","七":"07","八":"08","九":"09","十":"10","侍者":"11","騎士":"12","皇后":"13","國王":"14"};
   const imageFile=(suitFiles[suitName]||"Wands")+(rankFiles[rankName]||"01")+".jpg";
-  const imageUrl="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+imageFile;
-  return '<img class="tarot-rws-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 塔羅完整牌面插畫" loading="eager" decoding="async">';
+  const imageUrl="https://commons.wikimedia.org/wiki/Special:FilePath/"+imageFile;
+  return '<img class="tarot-rws-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 塔羅完整牌面插畫" loading="lazy" decoding="async">';
  }
  if(system==="runes"){
   const rune=esc(c.symbol||"ᚠ");
