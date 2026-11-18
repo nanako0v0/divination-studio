@@ -388,6 +388,14 @@ body{top:0!important}
 }
 .front .card-art img.tarot-minor-art{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#eee1c8;filter:sepia(.05) saturate(.92) contrast(1.02)}
 .front .card-art .lenormand-history-art{display:block;width:100%;height:100%;background-repeat:no-repeat;background-color:#e9dfcb;border:1px solid rgba(111,88,68,.35);border-radius:3px;box-shadow:inset 0 0 12px rgba(60,40,25,.12)}
+
+/* Unified Rider–Waite–Smith card face: full artwork, square aligned frame */
+.front[data-system="tarot"]{position:relative!important;padding:0!important;overflow:hidden!important;border:2px solid #a88453!important;border-radius:9px!important;background:#e9d8b7!important;box-shadow:inset 0 0 0 1px rgba(255,248,226,.72),0 10px 24px rgba(0,0,0,.34)!important}
+.front[data-system="tarot"]:before,.front[data-system="tarot"]:after{content:none!important;display:none!important}
+.front[data-system="tarot"] .card-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;background:#e9d8b7!important;box-shadow:none!important;overflow:hidden!important}
+.front[data-system="tarot"] .card-art img.tarot-rws-art{display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:fill!important;object-position:center!important;margin:0!important;padding:0!important;border:0!important;border-radius:5px!important;background:#e9d8b7!important;filter:saturate(.96) contrast(1.02)!important}
+.front[data-system="tarot"] strong,.front[data-system="tarot"] small{display:none!important}
+.front[data-system="tarot"].rev .card-art{transform:rotate(180deg)!important}
 </style>
 </head>
 <body>
@@ -516,12 +524,12 @@ function makePrompt(){
 }
 const DIVINATION_ART_SPRITE="";
 const TAROT_MAJOR_ART={
- "愚者":"00-fool.webp","魔術師":"01-magician.webp","女祭司":"02-high-priestess.webp","皇后":"03-empress.webp",
- "皇帝":"04-emperor.webp","教皇":"05-hierophant.webp","戀人":"06-lovers.webp","戰車":"07-chariot.webp",
- "力量":"08-strength.webp","隱者":"09-hermit.webp","命運之輪":"10-wheel-of-fortune.webp","正義":"11-justice.webp",
- "倒吊人":"12-hanged-man.webp","死神":"13-death.webp","節制":"14-temperance.webp","惡魔":"15-devil.webp",
- "高塔":"16-tower.webp","星星":"17-star.webp","月亮":"18-moon.webp","太陽":"19-sun.webp",
- "審判":"20-judgement.webp","世界":"21-world.webp"
+ "愚者":"RWS Tarot 1910 - 00 The Fool.png","魔術師":"RWS Tarot 1910 - 01 The Magician.png","女祭司":"RWS Tarot 1910 - 02 The High Priestess.png","皇后":"RWS Tarot 1910 - 03 The Empress.png",
+ "皇帝":"RWS Tarot 1910 - 04 The Emperor.png","教皇":"RWS Tarot 1910 - 05 The Hierophant.png","戀人":"RWS Tarot 1910 - 06 The Lovers.png","戰車":"RWS Tarot 1910 - 07 The Chariot.png",
+ "力量":"RWS Tarot 1910 - 08 Strength.png","隱者":"RWS Tarot 1910 - 09 The Hermit.png","命運之輪":"RWS Tarot 1910 - 10 Wheel of Fortune.png","正義":"RWS Tarot 1910 - 11 Justice.png",
+ "倒吊人":"RWS Tarot 1910 - 12 The Hanged Man.png","死神":"RWS Tarot 1910 - 13 Death.png","節制":"RWS Tarot 1910 - 14 Temperance.png","惡魔":"RWS Tarot 1910 - 15 The Devil.png",
+ "高塔":"RWS Tarot 1910 - 16 The Tower.png","星星":"RWS Tarot 1910 - 17 The Star.png","月亮":"RWS Tarot 1910 - 18 The Moon.png","太陽":"RWS Tarot 1910 - 19 The Sun.png",
+ "審判":"RWS Tarot 1910 - 20 Judgement.png","世界":"RWS Tarot 1910 - 21 The World.png"
 };
 function cardArtwork(c,index){
  const hash=[...c.name].reduce((a,ch)=>a+ch.charCodeAt(0),0);
@@ -536,7 +544,8 @@ function cardArtwork(c,index){
  }
  if(system==="tarot"&&TAROT_MAJOR_ART[c.name]){
   const file=TAROT_MAJOR_ART[c.name];
-  return '<img class="tarot-major-art" src="assets/tarot/'+file+'" alt="'+esc(c.name)+'塔羅牌古典油畫插畫" loading="eager" decoding="async">';
+  const imageUrl="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+encodeURIComponent(file);
+  return '<img class="tarot-rws-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 韋特塔羅完整場景插畫" loading="eager" decoding="async">';
  }
  if(system==="tarot"&&!TAROT_MAJOR_ART[c.name]){
   const parts=c.name.split("・"),suitName=parts[0],rankName=parts[1]||"Ace";
@@ -544,7 +553,7 @@ function cardArtwork(c,index){
   const rankFiles={"Ace":"01","二":"02","三":"03","四":"04","五":"05","六":"06","七":"07","八":"08","九":"09","十":"10","侍者":"11","騎士":"12","皇后":"13","國王":"14"};
   const imageFile=(suitFiles[suitName]||"Wands")+(rankFiles[rankName]||"01")+".jpg";
   const imageUrl="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+imageFile;
-  return '<img class="tarot-minor-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 塔羅完整牌面插畫" loading="eager" decoding="async">';
+  return '<img class="tarot-rws-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 塔羅完整牌面插畫" loading="eager" decoding="async">';
  }
  if(system==="runes"){
   const rune=esc(c.symbol||"ᚠ");
