@@ -508,6 +508,49 @@ function makePrompt(){
  if(system==="tarot"){
   specialist="【塔羅解讀要求】\n1. 先依牌陣位置逐張解讀，說明牌義如何回應該位置，而非只列關鍵字。\n2. 分析大阿爾克那與小阿爾克那比例、四花色分布、數字或宮廷牌重複等整體訊號。\n3. 若有逆位，說明它可能代表受阻、內化、延遲或失衡等不同可能，不要一律解成相反意思。\n4. 再整合牌與牌之間的呼應、衝突、因果線索與整體故事。\n5. 最後提供主要趨勢、盲點、可執行建議，以及哪些部分仍需現實資訊驗證。";
  }else if(system==="lenormand"){
+  specialist="【雷諾曼解讀要求】\n1. 務必以組合閱讀為核心，不要把每張牌拆開後各自下結論。\n2. 先分析相鄰牌對（1+2、2+3，依此類推），說明兩張牌如何互相修飾、限定或改變語意。\n3. 三張／五張線性牌陣請讀出連續句意、中心牌重點及整條牌線的敘事；九宮格請分析中心、十字、對角線與周邊；大牌陣則先分區與主題，再看人物牌、距離、鄰接和重要組合。\n4. 牌義應依問題情境判斷，避免把單一牌（例如蛇、雲、棺材）直接等同某個確定人物或事件。\n5. 最後整理整體訊息、可能發展、需要留意的現實線索與務實建議。";
+ }else{
+  specialist="【符文解讀要求】\n1. 先辨認符文名稱與符號，依抽取位置解讀其在本次問題中的象徵作用。\n2. 分析符文之間的呼應、張力、順序與整體主題，不要只逐枚列出關鍵字。\n3. 清楚區分可由歷史文字、銘文與語言研究支持的內容，和近現代占卜／靈性傳統賦予的詮釋。\n4. 不要宣稱每枚符文都有唯一、古已有之且已被史料證實的占卜牌義；若歷史證據不足，請明確說明。\n5. 最後提供整體解讀、可能的提醒、可實踐的建議及不確定性。";
+ }
+ return common+specialist+"\n\n【輸出結構】\n一、整體結論\n二、位置與牌／符文的關係分析\n三、組合與整體脈絡\n四、可能發展與關鍵變數\n五、具體建議\n六、解讀限制與仍待確認之處";
+}
+const DIVINATION_ART_SPRITE="";
+const TAROT_MAJOR_ART={
+ "愚者":"00-fool.webp","魔術師":"01-magician.webp","女祭司":"02-high-priestess.webp","皇后":"03-empress.webp",
+ "皇帝":"04-emperor.webp","教皇":"05-hierophant.webp","戀人":"06-lovers.webp","戰車":"07-chariot.webp",
+ "力量":"08-strength.webp","隱者":"09-hermit.webp","命運之輪":"10-wheel-of-fortune.webp","正義":"11-justice.webp",
+ "倒吊人":"12-hanged-man.webp","死神":"13-death.webp","節制":"14-temperance.webp","惡魔":"15-devil.webp",
+ "高塔":"16-tower.webp","星星":"17-star.webp","月亮":"18-moon.webp","太陽":"19-sun.webp",
+ "審判":"20-judgement.webp","世界":"21-world.webp"
+};
+function cardArtwork(c,index){
+ const hash=[...c.name].reduce((a,ch)=>a+ch.charCodeAt(0),0);
+ const uid="art"+index;
+ const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+ const photoMap={};
+ if(photoMap[c.name]){
+  const [col,row]=photoMap[c.name];
+  const x=col*100/3;
+  const y=row*100;
+  return '<div class="deck-photo" role="img" aria-label="'+esc(c.name)+' 原創牌面插畫" style="background-image:url('+DIVINATION_ART_SPRITE+');background-size:400% 200%;background-position:'+x+'% '+y+'%"></div>';
+ }
+ if(system==="tarot"&&TAROT_MAJOR_ART[c.name]){
+  const file=TAROT_MAJOR_ART[c.name];
+  return '<img class="tarot-major-art" src="assets/tarot/'+file+'" alt="'+esc(c.name)+'塔羅牌古典油畫插畫" loading="eager" decoding="async">';
+ }
+ if(system==="tarot"&&!TAROT_MAJOR_ART[c.name]){
+  const parts=c.name.split("・"),suitName=parts[0],rankName=parts[1]||"Ace";
+  const suitFiles={"權杖":"Wands","聖杯":"Cups","寶劍":"Swords","錢幣":"Pents"};
+  const rankFiles={"Ace":"01","二":"02","三":"03","四":"04","五":"05","六":"06","七":"07","八":"08","九":"09","十":"10","侍者":"11","騎士":"12","皇后":"13","國王":"14"};
+  const imageFile=(suitFiles[suitName]||"Wands")+(rankFiles[rankName]||"01")+".jpg";
+  const imageUrl="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+imageFile;
+  return '<img class="tarot-minor-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 塔羅完整牌面插畫" loading="eager" decoding="async">';
+ }
+ if(system==="runes"){
+  const rune=esc(c.symbol||"ᚠ");
+  return '<svg viewBox="0 0 120 150" role="img" aria-label="'+esc(c.name)+' 北歐符文金刻牌面" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'stone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#201b15"/><stop offset=".48" stop-color="#0c0b09"/><stop offset="1" stop-color="#050505"/></linearGradient><linearGradient id="'+uid+'gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0d18a"/><stop offset=".5" stop-color="#b58a43"/><stop offset="1" stop-color="#80602d"/></linearGradient><filter id="'+uid+'rough"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="2"/><feColorMatrix values="0 0 0 0 .6 0 0 0 0 .55 0 0 0 0 .45 0 0 0 .14 0"/></filter></defs><rect x="3" y="3" width="114" height="144" rx="7" fill="#030303" stroke="url(#'+uid+'gold)" stroke-width="1.5"/><rect x="8" y="8" width="104" height="134" rx="4" fill="url(#'+uid+'stone)" stroke="#9a783d" stroke-width=".8"/><path d="M15 33V15h18M87 15h18v18M15 117v18h18m54 0h18v-18" fill="none" stroke="url(#'+uid+'gold)" stroke-width="1.4"/><path d="M18 22q8 0 8 8m76-8q-8 0-8 8M18 128q8 0 8-8m76 8q-8 0-8-8" fill="none" stroke="#b58a43" stroke-width="1"/><path d="M60 25V121" stroke="#9e793c" stroke-opacity=".24" stroke-width=".8"/><rect x="25" y="29" width="70" height="88" rx="3" fill="#0a0907" stroke="#72562d" stroke-opacity=".7"/><text x="60" y="91" text-anchor="middle" font-family="serif" font-size="68" fill="url(#'+uid+'gold)" stroke="#5c431f" stroke-width=".8" paint-order="stroke">'+rune+'</text><path d="M39 121h42" stroke="#b58a43" stroke-width=".8"/><text x="60" y="134" text-anchor="middle" font-family="Georgia,serif" font-size="7" letter-spacing="2" fill="#d7b66e">'+esc(c.name.toUpperCase())+'</text><rect x="5" y="5" width="110" height="140" filter="url(#'+uid+'rough)" opacity=".32"/></svg>';
+ }
+ if(system==="lenormand"){
   const lenormandOrder=["騎士","幸運草","船","房子","樹","雲","蛇","棺材","花束","鐮刀","鞭子","鳥","小孩","狐狸","熊","星星","鸛鳥","狗","高塔","花園","山","岔路","老鼠","心","戒指","書","信","男人","女人","百合","太陽","月亮","鑰匙","魚","錨","十字架"];
   const cardNo=lenormandOrder.indexOf(c.name);
   if(cardNo>=0){
