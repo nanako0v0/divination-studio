@@ -568,13 +568,14 @@ function makePrompt(){
  return common+specialist+"\n\n【輸出結構】\n一、整體結論\n二、位置與牌／符文的關係分析\n三、組合與整體脈絡\n四、可能發展與關鍵變數\n五、具體建議\n六、解讀限制與仍待確認之處";
 }
 const DIVINATION_ART_SPRITE="";
+// All 78 tarot cards use the same Pam-A Rider–Waite–Smith deck.
 const TAROT_MAJOR_ART={
- "愚者":"00-fool.webp","魔術師":"01-magician.webp","女祭司":"02-high-priestess.webp","皇后":"03-empress.webp",
- "皇帝":"04-emperor.webp","教皇":"05-hierophant.webp","戀人":"06-lovers.webp","戰車":"07-chariot.webp",
- "力量":"08-strength.webp","隱者":"09-hermit.webp","命運之輪":"10-wheel-of-fortune.webp","正義":"11-justice.webp",
- "倒吊人":"12-hanged-man.webp","死神":"13-death.webp","節制":"14-temperance.webp","惡魔":"15-devil.webp",
- "高塔":"16-tower.webp","星星":"17-star.webp","月亮":"18-moon.webp","太陽":"19-sun.webp",
- "審判":"20-judgement.webp","世界":"21-world.webp"
+ "愚者":"RWS Tarot 00 Fool.jpg","魔術師":"RWS Tarot 01 Magician.jpg","女祭司":"RWS Tarot 02 High Priestess.jpg","皇后":"RWS Tarot 03 Empress.jpg",
+ "皇帝":"RWS Tarot 04 Emperor.jpg","教皇":"RWS Tarot 05 Hierophant.jpg","戀人":"RWS Tarot 06 Lovers.jpg","戰車":"RWS Tarot 07 Chariot.jpg",
+ "力量":"RWS Tarot 08 Strength.jpg","隱者":"RWS Tarot 09 Hermit.jpg","命運之輪":"RWS Tarot 10 Wheel of Fortune.jpg","正義":"RWS Tarot 11 Justice.jpg",
+ "倒吊人":"RWS Tarot 12 Hanged Man.jpg","死神":"RWS Tarot 13 Death.jpg","節制":"RWS Tarot 14 Temperance.jpg","惡魔":"RWS Tarot 15 Devil.jpg",
+ "高塔":"RWS Tarot 16 Tower.jpg","星星":"RWS Tarot 17 Star.jpg","月亮":"RWS Tarot 18 Moon.jpg","太陽":"RWS Tarot 19 Sun.jpg",
+ "審判":"RWS Tarot 20 Judgement.jpg","世界":"RWS Tarot 21 World.jpg"
 };
 function cardArtwork(c,index){
  const hash=[...c.name].reduce((a,ch)=>a+ch.charCodeAt(0),0);
@@ -589,7 +590,7 @@ function cardArtwork(c,index){
  }
  if(system==="tarot"&&TAROT_MAJOR_ART[c.name]){
   const file=TAROT_MAJOR_ART[c.name];
-  const imageUrl="assets/tarot/"+file;
+  const imageUrl="https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(file);
   return '<img class="tarot-rws-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 韋特塔羅完整場景插畫" loading="eager" decoding="async" fetchpriority="high">';
  }
  if(system==="tarot"&&!TAROT_MAJOR_ART[c.name]){
@@ -597,7 +598,7 @@ function cardArtwork(c,index){
   const suitFiles={"權杖":"Wands","聖杯":"Cups","寶劍":"Swords","錢幣":"Pents"};
   const rankFiles={"Ace":"01","二":"02","三":"03","四":"04","五":"05","六":"06","七":"07","八":"08","九":"09","十":"10","侍者":"11","騎士":"12","皇后":"13","國王":"14"};
   const imageFile=(suitFiles[suitName]||"Wands")+(rankFiles[rankName]||"01")+".jpg";
-  const imageUrl="https://commons.wikimedia.org/wiki/Special:FilePath/"+imageFile;
+  const imageUrl="https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(imageFile);
   return '<img class="tarot-rws-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 塔羅完整牌面插畫" loading="lazy" decoding="async">';
  }
  if(system==="runes"){
