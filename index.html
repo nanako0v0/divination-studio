@@ -437,6 +437,18 @@ body{top:0!important}
 .front[data-system="lenormand"]:after{display:none!important;content:none!important}
 .front[data-system="lenormand"].rev .card-art{transform:rotate(180deg)!important}
 
+
+/* Lenormand card image: crop each original card, no sheet gutters or white margins */
+.front[data-system="lenormand"] .card-art .lenormand-history-art{
+ display:block!important;position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;overflow:hidden!important;
+ background:none!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;
+}
+.front[data-system="lenormand"] .card-art .lenormand-history-art image{
+ width:100%;height:100%;
+}
+
 </style>
 </head>
 <body>
@@ -605,9 +617,10 @@ function cardArtwork(c,index){
   const cardNo=lenormandOrder.indexOf(c.name);
   if(cardNo>=0){
    const col=cardNo%6,row=Math.floor(cardNo/6);
-   const x=col*20,y=row*20;
+   /* Exact card bounds on the 960×1206 scan; crop away the sheet's white gutters. */
+   const x=34+col*152,y=29+row*194;
    const sheet="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png/960px-Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png";
-   return '<div class="lenormand-history-art" role="img" aria-label="'+esc(c.name)+' 1799 年《希望遊戲》古典牌面" style="background-image:url('+sheet+');background-size:600% 600%;background-position:'+x+'% '+y+'%"></div>';
+   return '<svg class="lenormand-history-art" viewBox="'+x+' '+y+' 132 180" preserveAspectRatio="xMidYMid slice" role="img" aria-label="'+esc(c.name)+' 1799 年《希望遊戲》古典牌面" xmlns="http://www.w3.org/2000/svg"><image href="'+sheet+'" x="0" y="0" width="960" height="1206" preserveAspectRatio="none"/></svg>';
   }
  }
  const palette=[["#b7a17e","#5b493c","#253b36","#e5d3ad"],["#9c9cae","#51475f","#283847","#e8d9c1"],["#c4a16f","#80513f","#3d4b39","#ead8b5"],["#a8b8b1","#536d68","#293d42","#e9d9bc"]];
