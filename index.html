@@ -387,7 +387,13 @@ body{top:0!important}
  border-radius:2px;filter:saturate(.88) contrast(1.02);
 }
 .front .card-art img.tarot-minor-art{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#eee1c8;filter:sepia(.05) saturate(.92) contrast(1.02)}
-.front .card-art .lenormand-history-art{display:block;width:100%;height:100%;background-repeat:no-repeat;background-color:#e9dfcb;border:1px solid rgba(111,88,68,.35);border-radius:3px;box-shadow:inset 0 0 12px rgba(60,40,25,.12)}
+.front .card-art .lenormand-history-art{display:block;width:100%;height:100%;background-repeat:no-repeat;background-color:#e9dfcb;border:0;border-radius:0;box-shadow:none}
+.card.lenormand-card{aspect-ratio:2/3!important}
+.front[data-system="lenormand"]{position:absolute!important;inset:0!important;padding:0!important;overflow:hidden!important;border:2px solid #a88453!important;border-radius:9px!important;background:#e9dfcb!important;box-shadow:inset 0 0 0 1px rgba(255,248,226,.72),0 10px 24px rgba(0,0,0,.34)!important}
+.front[data-system="lenormand"]:before,.front[data-system="lenormand"]:after{content:none!important;display:none!important}
+.front[data-system="lenormand"] .card-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;background:#e9dfcb!important;box-shadow:none!important;overflow:hidden!important}
+.front[data-system="lenormand"] strong,.front[data-system="lenormand"] small{display:none!important}
+.front[data-system="lenormand"].rev .card-art{transform:rotate(180deg)!important}
 
 /* Unified Rider–Waite–Smith card face: full artwork, square aligned frame */
 .card.tarot-card{aspect-ratio:.59/1!important}
@@ -546,7 +552,7 @@ function cardArtwork(c,index){
  if(system==="tarot"&&TAROT_MAJOR_ART[c.name]){
   const file=TAROT_MAJOR_ART[c.name];
   const imageUrl="https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(file);
-  return '<img class="tarot-rws-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 韋特塔羅完整場景插畫" loading="eager" decoding="async">';
+  return '<img class="tarot-rws-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 韋特塔羅完整場景插畫" loading="lazy" decoding="async">';
  }
  if(system==="tarot"&&!TAROT_MAJOR_ART[c.name]){
   const parts=c.name.split("・"),suitName=parts[0],rankName=parts[1]||"Ace";
@@ -566,7 +572,7 @@ function cardArtwork(c,index){
   if(cardNo>=0){
    const col=cardNo%6,row=Math.floor(cardNo/6);
    const x=col*20,y=row*20;
-   const sheet="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png/1920px-Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png";
+   const sheet="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png/960px-Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png";
    return '<div class="lenormand-history-art" role="img" aria-label="'+esc(c.name)+' 1799 年《希望遊戲》古典牌面" style="background-image:url('+sheet+');background-size:600% 600%;background-position:'+x+'% '+y+'%"></div>';
   }
  }
@@ -583,7 +589,7 @@ function cardArtwork(c,index){
 }
 function draw(){let n=Number($("count").value),d=shuffle(deck());lastDraw=d.slice(0,n).map((c,i)=>({...c,reversed:system!=="runes"&&$("reversals").checked&&Math.random()<.5,position:(positions[n]||[])[i]||("第"+(i+1)+"張") }));render();}
 function render(){
-$("cards").innerHTML="";lastDraw.forEach((c,i)=>{let w=document.createElement("div");w.className="card-wrap";let card=document.createElement("div");card.className="card"+(system==="tarot"?" tarot-card":"");let inner=document.createElement("div");inner.className="inner";let back=document.createElement("div");back.className="back";back.innerHTML="<span>✧</span><small>DIVINATION</small>";let front=document.createElement("div");front.className="front"+(c.reversed?" rev":"");front.dataset.system=system;let art=document.createElement("div");art.className="card-art";art.innerHTML=cardArtwork(c,i);let name=document.createElement("strong");name.textContent=c.name;let orient=document.createElement("small");orient.textContent=system==="runes"?"符文":(c.reversed?"逆位":"正位");front.append(art,name,orient);inner.append(back,front);card.append(inner);let pos=document.createElement("div");pos.className="position";pos.textContent=c.position;let meaning=document.createElement("div");meaning.className="meaning";meaning.textContent=c.meaning;w.append(card,pos,meaning);$("cards").append(w);setTimeout(()=>card.classList.add("flipped"),200+i*180);});
+$("cards").innerHTML="";lastDraw.forEach((c,i)=>{let w=document.createElement("div");w.className="card-wrap";let card=document.createElement("div");card.className="card"+(system==="tarot"?" tarot-card":system==="lenormand"?" lenormand-card":"");let inner=document.createElement("div");inner.className="inner";let back=document.createElement("div");back.className="back";back.innerHTML="<span>✧</span><small>DIVINATION</small>";let front=document.createElement("div");front.className="front"+(c.reversed?" rev":"");front.dataset.system=system;let art=document.createElement("div");art.className="card-art";art.innerHTML=cardArtwork(c,i);let name=document.createElement("strong");name.textContent=c.name;let orient=document.createElement("small");orient.textContent=system==="runes"?"符文":(c.reversed?"逆位":"正位");front.append(art,name,orient);inner.append(back,front);card.append(inner);let pos=document.createElement("div");pos.className="position";pos.textContent=c.position;let meaning=document.createElement("div");meaning.className="meaning";meaning.textContent=c.meaning;w.append(card,pos,meaning);$("cards").append(w);setTimeout(()=>card.classList.add("flipped"),200+i*180);});
 $("summary").textContent=$("spread").selectedOptions[0].textContent+" · "+new Date().toLocaleString("zh-TW");$("prompt").textContent=makePrompt();$("result").classList.remove("hidden");$("result").scrollIntoView({behavior:"smooth",block:"start"});
 }
 $("draw").addEventListener("click",draw);$("redraw").addEventListener("click",draw);
