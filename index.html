@@ -548,45 +548,57 @@ function cardArtwork(c,index){
    ["#647c8b","#303d49","#e4dfcf","#9eafb4"],
    ["#a88b50","#4c4432","#efe3c5","#c7ad70"]
   ];
-  const p=palettes[suitIndex],uid="minor"+index;
-  const symbols=["✦","♡","⚔","◇"];
-  const mark=symbols[suitIndex];
-  const positions={
-   1:[[60,76]],2:[[60,45],[60,107]],3:[[60,36],[60,76],[60,116]],
-   4:[[39,47],[81,47],[39,105],[81,105]],
-   5:[[39,43],[81,43],[60,76],[39,109],[81,109]],
-   6:[[39,36],[81,36],[39,76],[81,76],[39,116],[81,116]],
-   7:[[39,31],[81,31],[39,63],[81,63],[60,82],[39,116],[81,116]],
-   8:[[39,28],[81,28],[39,58],[81,58],[39,88],[81,88],[39,118],[81,118]],
-   9:[[39,26],[81,26],[39,52],[81,52],[60,76],[39,100],[81,100],[39,126],[81,126]],
-   10:[[39,24],[81,24],[39,49],[81,49],[39,74],[81,74],[39,99],[81,99],[39,124],[81,124]]
+  const p=palettes[suitIndex],uid="minorScene"+index;
+  const suitGlyph=["杖","杯","劍","幣"][suitIndex];
+  const emblem=(x,y,scale=1,rot=0)=>{
+   const shapes=[
+    '<path d="M0 16Q-2 0 0-17M0-8q-12-10-13-2 5 8 13 7m0 4q12-10 13-2-5 8-13 7" fill="none" stroke="'+p[1]+'" stroke-width="3" stroke-linecap="round"/><path d="M0-18l-4-7 4-5 4 5Z" fill="'+p[3]+'" stroke="'+p[1]+'" stroke-width="1"/>',
+    '<path d="M-12-14h24l-3 19q-9 11-18 0Z" fill="'+p[2]+'" stroke="'+p[1]+'" stroke-width="2"/><path d="M12-10q13-3 11 8-1 7-12 5" fill="none" stroke="'+p[1]+'" stroke-width="2.5"/><path d="M-6-4h12M-4 11h8" stroke="'+p[3]+'" stroke-width="2"/>',
+    '<path d="M0-25L7-4 0 3-7-4Z" fill="'+p[2]+'" stroke="'+p[1]+'" stroke-width="1.5"/><path d="M0 3v24M-12 9H12" stroke="'+p[1]+'" stroke-width="3" stroke-linecap="round"/>',
+    '<circle r="17" fill="'+p[3]+'" stroke="'+p[1]+'" stroke-width="2"/><circle r="12" fill="none" stroke="'+p[2]+'" stroke-width="1.5"/><path d="M0-10L3-3 10 0 3 3 0 10-3 3-10 0-3-3Z" fill="'+p[1]+'"/>'
+   ];
+   return '<g transform="translate('+x+' '+y+') rotate('+rot+') scale('+scale+')">'+shapes[suitIndex]+'</g>';
   };
-  const ornament='<path d="M60 13l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z" fill="'+p[3]+'" opacity=".7"/>';
-  const pip=(x,y,scale=1,rot=0)=>{
-   const emblem=suitIndex===0
-    ? '<path d="M0-12Q-2-3 0 12" fill="none" stroke="'+p[0]+'" stroke-width="2.6" stroke-linecap="round"/><path d="M0-7q-9-7-10-1 5 5 10 4m0 3q9-7 10-1-5 5-10 4" fill="'+p[3]+'" stroke="'+p[1]+'" stroke-width=".8"/><path d="M0-13l-2-4 2-3 2 3Z" fill="'+p[2]+'" stroke="'+p[1]+'" stroke-width=".8"/>'
-    : suitIndex===1
-    ? '<path d="M-9-10Q-11-1-6 2L-4 9H4L6 2Q11-1 9-10Z" fill="'+p[3]+'" stroke="'+p[1]+'" stroke-width="1.5"/><path d="M-9-8q-9-1-7 7 1 5 8 4m16-11q9-1 7 7-1 5-8 4" fill="none" stroke="'+p[0]+'" stroke-width="1.8"/><path d="M-5 10h10M-3 12h6" stroke="'+p[1]+'" stroke-width="1.4"/><path d="M-4-4h8" stroke="'+p[2]+'" stroke-width="1.2"/>'
-    : suitIndex===2
-    ? '<path d="M0-14L4-2 0 2-4-2Z" fill="'+p[2]+'" stroke="'+p[1]+'" stroke-width="1.2"/><path d="M0 2V12M-6 5H6" stroke="'+p[0]+'" stroke-width="2" stroke-linecap="round"/><path d="M0-11V-2" stroke="#fff7e7" stroke-opacity=".7" stroke-width=".8"/>'
-    : '<circle r="11" fill="'+p[3]+'" stroke="'+p[1]+'" stroke-width="1.5"/><circle r="8" fill="none" stroke="'+p[2]+'" stroke-width="1"/><path d="M0-7L2-2 7 0 2 2 0 7-2 2-7 0-2-2Z" fill="'+p[1]+'"/><circle r="1.5" fill="'+p[2]+'"/>';
-   return '<g transform="translate('+x+' '+y+') rotate('+rot+') scale('+scale+')"><circle r="13" fill="'+p[1]+'" fill-opacity=".16" stroke="'+p[3]+'" stroke-width=".8"/><circle r="11.2" fill="'+p[2]+'" fill-opacity=".8" stroke="'+p[0]+'" stroke-width="1.1"/>'+emblem+'</g>';
-  };
-  const pips=court?"":(positions[count]||positions[1]).map(([x,y],i)=>pip(x,y, count>=8?.83:1, (i%2?180:0))).join("");
-  const courtHead='<circle cx="60" cy="43" r="11" fill="#d6ad88" stroke="'+p[1]+'" stroke-width="1.5"/><path d="M49 39q2-16 12-14 10 0 11 14l-5-4-6 3-6-3Z" fill="'+p[1]+'"/>';
-  const crown=rankIndex===12||rankIndex===13?'<path d="M47 29l2-12 8 8 4-12 5 12 8-8 1 12Z" fill="'+p[3]+'" stroke="'+p[1]+'" stroke-width="1.3"/>':rankIndex===11?'<path d="M49 28l3-10 8 7 8-7 3 10Z" fill="'+p[0]+'" stroke="'+p[1]+'" stroke-width="1.3"/>':'<path d="M49 29q11-12 22 0" fill="none" stroke="'+p[3]+'" stroke-width="4"/>';
-  const robe=rankIndex===10?
-   '<path d="M48 58q12-9 24 0l13 55H35Z" fill="'+p[0]+'" stroke="'+p[1]+'" stroke-width="2"/><path d="M60 60v48m-13-32 13 8 13-8" fill="none" stroke="'+p[2]+'" stroke-width="2"/>':
-   rankIndex===11?
-   '<path d="M48 58q12-8 24 0l17 52H31Z" fill="'+p[0]+'" stroke="'+p[1]+'" stroke-width="2"/><path d="M43 73l34 24m-17-38v45" stroke="'+p[2]+'" stroke-width="2"/>':
-   rankIndex===12?
-   '<path d="M47 57q13-10 26 0l18 56H29Z" fill="'+p[3]+'" stroke="'+p[1]+'" stroke-width="2"/><path d="M60 60v49m-18-22 18 10 18-10" fill="none" stroke="'+p[2]+'" stroke-width="2"/>':
-   '<path d="M46 57q14-10 28 0l21 57H25Z" fill="'+p[0]+'" stroke="'+p[1]+'" stroke-width="2"/><path d="M60 60v50m-22-27 22 13 22-13" fill="none" stroke="'+p[3]+'" stroke-width="3"/>';
-  const courtArt=court?'<g>'+robe+courtHead+crown+'<path d="M47 65l-17 29m43-29 17 29" stroke="'+p[1]+'" stroke-width="5" stroke-linecap="round"/><path d="M30 94l-3 17m63-17 3 17" stroke="'+p[1]+'" stroke-width="4"/><path d="M91 48v65m-7-56 7-10 7 10" fill="none" stroke="'+p[3]+'" stroke-width="3"/><circle cx="60" cy="85" r="5" fill="'+p[2]+'"/></g>':'';
-  const aceArt=count===1?'<circle cx="60" cy="76" r="29" fill="none" stroke="'+p[3]+'" stroke-width="1.5" stroke-dasharray="2 3"/><circle cx="60" cy="76" r="20" fill="'+p[2]+'" fill-opacity=".7" stroke="'+p[0]+'" stroke-width="1.5"/>':'';
-  const artwork=court?courtArt:aceArt+pips;
-  const badge=String(rankIndex+1).padStart(2,"0");
-  return '<svg viewBox="0 0 120 150" role="img" aria-label="'+esc(c.name)+' 塔羅小阿爾克那復古插畫" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+p[2]+'"/><stop offset=".55" stop-color="#f5ead6"/><stop offset="1" stop-color="#cbb58f"/></linearGradient><linearGradient id="'+uid+'shade" x2="0" y2="1"><stop stop-color="'+p[3]+'" stop-opacity=".18"/><stop offset="1" stop-color="'+p[1]+'" stop-opacity=".12"/></linearGradient><filter id="'+uid+'grain"><feTurbulence type="fractalNoise" baseFrequency=".68" numOctaves="2"/><feColorMatrix values="0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .27 0 0 0 .1 0"/></filter></defs><rect x="2.5" y="2.5" width="115" height="145" rx="5" fill="url(#'+uid+'paper)" stroke="'+p[1]+'" stroke-width="2"/><rect x="7" y="7" width="106" height="136" rx="3" fill="url(#'+uid+'shade)" stroke="'+p[0]+'" stroke-width="1"/><rect x="11" y="11" width="98" height="128" rx="2" fill="none" stroke="'+p[1]+'" stroke-opacity=".42" stroke-width=".7"/><path d="M15 31V15h16M89 15h16v16M15 119v16h16m58 0h16v-16" fill="none" stroke="'+p[0]+'" stroke-width="1.4"/>'+ornament+'<ellipse cx="60" cy="77" rx="43" ry="54" fill="none" stroke="'+p[0]+'" stroke-opacity=".42" stroke-dasharray="1.5 3"/><path d="M17 76h9m68 0h9M60 34v7m0 72v7" stroke="'+p[3]+'" stroke-width="1"/><g>'+artwork+'</g><rect x="13" y="13" width="17" height="13" rx="2" fill="'+p[1]+'"/><text x="21.5" y="22.5" text-anchor="middle" font-size="7" fill="'+p[2]+'">'+badge+'</text><text x="60" y="135" text-anchor="middle" font-family="Georgia,serif" font-size="6.5" letter-spacing="1.2" fill="'+p[1]+'">'+suitName.toUpperCase()+'</text><rect x="3" y="3" width="114" height="144" rx="5" filter="url(#'+uid+'grain)" opacity=".25"/></svg>';
+  const bg='<rect x="4" y="4" width="112" height="142" fill="#d8c4a0"/><rect x="7" y="7" width="106" height="136" fill="url(#'+uid+'sky)"/><circle cx="91" cy="25" r="13" fill="#f2dfb8" opacity=".7"/><path d="M7 93Q28 75 49 91T88 87t25 5v51H7Z" fill="'+p[1]+'" opacity=".45"/><path d="M7 112q24-16 48-5t58-5v41H7Z" fill="#394b40" opacity=".38"/>';
+  const person=(x,y,scale=1,pose=0,robe=p[0])=>'<g transform="translate('+x+' '+y+') scale('+scale+')"><circle cx="0" cy="-23" r="7" fill="#d8ad87" stroke="#624a3a" stroke-width="1"/><path d="M-7-26q2-11 10-8 7 2 5 11l-5-4-9 3Z" fill="#554337"/><path d="M-11-14Q0-21 11-14L16 17H-16Z" fill="'+robe+'" stroke="#49382e" stroke-width="1.5"/><path d="M-8-9L'+(pose===1?'-22 7':'-17 4')+'M8-9L'+(pose===2?'23 -2':'17 4')+'" stroke="#d8ad87" stroke-width="4" stroke-linecap="round"/><path d="M-8 17l-3 13m19-13 3 13" stroke="#514035" stroke-width="4" stroke-linecap="round"/><path d="M-8-7h16" stroke="'+p[2]+'" stroke-width="1.4"/></g>';
+  const objectCount= court?1:count;
+  const objectPositions=objectCount===1?[[60,77]]:objectCount===2?[[39,77],[81,77]]:objectCount===3?[[34,55],[60,92],[86,55]]:objectCount===4?[[38,52],[82,52],[38,104],[82,104]]:objectCount===5?[[35,48],[85,48],[60,77],[35,108],[85,108]]:objectCount===6?[[36,43],[84,43],[36,77],[84,77],[36,111],[84,111]]:objectCount===7?[[34,39],[86,39],[34,68],[86,68],[60,83],[34,113],[86,113]]:objectCount===8?[[35,35],[85,35],[35,62],[85,62],[35,90],[85,90],[35,117],[85,117]]:objectCount===9?[[35,31],[85,31],[35,56],[85,56],[60,75],[35,98],[85,98],[35,123],[85,123]]:[[35,29],[85,29],[35,51],[85,51],[35,73],[85,73],[35,95],[85,95],[35,117],[85,117]];
+  let objects="";
+  if(court){
+   const robe=rankIndex===10?"#a77a53":rankIndex===11?"#8e9c9b":rankIndex===12?"#9b6e78":"#9c8655";
+   objects=person(60,88,1.75,rankIndex===11?2:1,robe)+emblem(88,83,.8);
+   if(rankIndex===11) objects+='<path d="M19 108q18-25 32-20l9 15" fill="none" stroke="#594437" stroke-width="6"/><path d="M20 109l-4 12m40-17 8 11" stroke="#594437" stroke-width="4"/>';
+   if(rankIndex===12||rankIndex===13) objects+='<path d="M45 51l3-13 12 9 12-9 3 13Z" fill="'+p[3]+'" stroke="'+p[1]+'" stroke-width="1.5"/><path d="M46 50h28" stroke="'+p[2]+'" stroke-width="2"/>';
+   if(rankIndex===10) objects+='<path d="M48 51q12-14 24 0" fill="none" stroke="'+p[3]+'" stroke-width="4"/>';
+  }else if(rankIndex===0){
+   objects='<path d="M15 65q11-18 24-4l9 10" fill="none" stroke="#d8ad87" stroke-width="10" stroke-linecap="round"/>'+emblem(61,76,1.55);
+   objects+='<path d="M23 113q37-26 74 0" fill="none" stroke="'+p[3]+'" stroke-width="2"/>';
+  }else if(rankIndex===1){
+   objects=person(38,91,.9,1)+person(82,91,.9,2)+emblem(60,63,.72);
+  }else if(rankIndex===2){
+   objects=person(60,87,1.15,2)+emblem(34,60,.62)+emblem(86,60,.62);
+  }else if(rankIndex===3){
+   objects=person(60,91,1.35,0)+ '<path d="M25 58q35-34 70 0" fill="none" stroke="'+p[3]+'" stroke-width="5"/>'+emblem(38,48,.48)+emblem(82,48,.48);
+  }else if(rankIndex===4){
+   objects=person(60,93,1.1,1)+emblem(35,48,.62)+emblem(85,48,.62)+ '<path d="M22 112l18-14m58 14L80 98" stroke="'+p[1]+'" stroke-width="3"/>';
+  }else if(rankIndex===5){
+   objects=person(60,91,1.12,2)+emblem(35,54,.58)+emblem(85,54,.58)+ '<path d="M19 119q41-26 82 0" fill="none" stroke="'+p[3]+'" stroke-width="3"/>';
+  }else if(rankIndex===6){
+   objects=person(60,90,1.15,1)+emblem(34,44,.58)+emblem(86,44,.58)+emblem(34,112,.5)+emblem(86,112,.5);
+  }else if(rankIndex===7){
+   objects=person(60,91,1.12,2)+ '<path d="M23 44l74 69M97 44L23 113" stroke="'+p[3]+'" stroke-opacity=".55" stroke-width="2"/>'+emblem(36,52,.48)+emblem(84,52,.48)+emblem(36,108,.48)+emblem(84,108,.48);
+  }else if(rankIndex===8){
+   objects=person(60,91,1.08,1)+ '<path d="M18 112q42-24 84 0" fill="none" stroke="'+p[3]+'" stroke-width="4"/>'+emblem(36,42,.5)+emblem(84,42,.5)+emblem(36,74,.5)+emblem(84,74,.5)+emblem(36,109,.5)+emblem(84,109,.5);
+  }else{
+   objects=person(60,89,1.2,0)+ '<path d="M18 115q42-25 84 0" fill="none" stroke="'+p[3]+'" stroke-width="4"/>'+objectPositions.map((xy,i)=>emblem(xy[0],xy[1],.34,i%2?180:0)).join("");
+  }
+  if(!court&&rankIndex>1&&rankIndex<10){
+   const visible=objectPositions.slice(0,Math.min(count,10));
+   objects+=visible.map((xy,i)=>emblem(xy[0],xy[1],rankIndex>=7?.34:.43,i%2?180:0)).join("");
+  }
+  const stars='<path d="M23 24l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" fill="#f7ebd1"/><path d="M99 55l2 4 4 2-4 2-2 4-2-4-4-2 4-2Z" fill="#f7ebd1"/>';
+  const label=String(rankIndex+1).padStart(2,"0");
+  return '<svg viewBox="0 0 120 150" role="img" aria-label="'+esc(c.name)+' 塔羅敘事場景插畫" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+p[2]+'"/><stop offset=".62" stop-color="#d9c29b"/><stop offset="1" stop-color="'+p[0]+'"/></linearGradient><linearGradient id="'+uid+'shade" x2="0" y2="1"><stop stop-color="#fff4df" stop-opacity=".12"/><stop offset="1" stop-color="'+p[1]+'" stop-opacity=".2"/></linearGradient><filter id="'+uid+'grain"><feTurbulence type="fractalNoise" baseFrequency=".6" numOctaves="2"/><feColorMatrix values="0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .27 0 0 0 .12 0"/></filter></defs>'+bg+stars+'<rect x="8" y="8" width="104" height="134" fill="url(#'+uid+'shade)"/><g>'+objects+'</g><path d="M13 123q23-9 47 0t47 0" fill="none" stroke="#e8d5b4" stroke-opacity=".65" stroke-width="1.3"/><rect x="4" y="4" width="112" height="142" fill="none" stroke="'+p[1]+'" stroke-width="2"/><rect x="8" y="8" width="104" height="134" fill="none" stroke="'+p[3]+'" stroke-width=".9"/><path d="M12 25V12h13m70 0h13v13M12 125v13h13m70 0h13v-13" fill="none" stroke="'+p[3]+'" stroke-width="1.5"/><rect x="11" y="12" width="15" height="12" rx="2" fill="'+p[1]+'"/><text x="18.5" y="20.5" text-anchor="middle" font-size="6" fill="'+p[2]+'">'+label+'</text><text x="60" y="136" text-anchor="middle" font-family="Georgia,serif" font-size="6.2" letter-spacing=".8" fill="'+p[1]+'">'+suitName.toUpperCase()+'</text><rect x="5" y="5" width="110" height="140" filter="url(#'+uid+'grain)" opacity=".28"/></svg>';
  }
  if(system==="runes"){
   const rune=esc(c.symbol||"ᚠ");
