@@ -424,7 +424,7 @@ body{top:0!important}
   width:100%!important;height:100%!important;margin:0!important;padding:0!important;
   border:0!important;border-radius:0!important;box-shadow:none!important;
   background-repeat:no-repeat!important;background-color:#e9dfcb!important;
-  background-size:720% 720%!important;
+  background-size:800% 800%!important;
 }
 .front[data-system="lenormand"] strong,
 .front[data-system="lenormand"] small{display:none!important}
@@ -609,7 +609,7 @@ function cardArtwork(c,index){
    /* Exact card bounds on the 960×1206 scan; crop away the sheet's white gutters. */
    const x=34+col*152,y=29+row*194;
    const sheet="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png/960px-Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png";
-   const px=((x+4)/960*116.129).toFixed(2),py=((y+4)/1206*116.129).toFixed(2);
+   const px=((x+10)/960*114.286).toFixed(2),py=((y+10)/1206*114.286).toFixed(2);
    return '<div class="lenormand-history-art" role="img" aria-label="'+esc(c.name)+' 1799 年《希望遊戲》古典牌面" style="background-image:url('+sheet+');background-size:720% 720%;background-position:'+px+'% '+py+'%"></div>';
   }
  }
