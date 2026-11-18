@@ -620,7 +620,7 @@ function cardArtwork(c,index){
    /* Exact card bounds on the 960×1206 scan; crop away the sheet's white gutters. */
    const x=34+col*152,y=29+row*194;
    const sheet="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png/960px-Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png";
-   return '<svg class="lenormand-history-art" viewBox="'+x+' '+y+' 132 180" preserveAspectRatio="xMidYMid slice" role="img" aria-label="'+esc(c.name)+' 1799 年《希望遊戲》古典牌面" xmlns="http://www.w3.org/2000/svg"><image href="'+sheet+'" x="0" y="0" width="960" height="1206" preserveAspectRatio="none"/></svg>';
+   return '<svg class="lenormand-history-art" viewBox="'+(x+7)+' '+(y+6)+' 118 168" preserveAspectRatio="xMidYMid slice" role="img" aria-label="'+esc(c.name)+' 1799 年《希望遊戲》古典牌面" xmlns="http://www.w3.org/2000/svg"><image href="'+sheet+'" x="0" y="0" width="960" height="1206" preserveAspectRatio="none"/></svg>';
   }
  }
  const palette=[["#b7a17e","#5b493c","#253b36","#e5d3ad"],["#9c9cae","#51475f","#283847","#e8d9c1"],["#c4a16f","#80513f","#3d4b39","#ead8b5"],["#a8b8b1","#536d68","#293d42","#e9d9bc"]];
