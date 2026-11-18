@@ -386,6 +386,7 @@ body{top:0!important}
  display:block;width:100%;height:100%;object-fit:cover;object-position:center;
  border-radius:2px;filter:saturate(.88) contrast(1.02);
 }
+.front .card-art img.tarot-minor-art{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#eee1c8;filter:sepia(.05) saturate(.92) contrast(1.02)}
 </style>
 </head>
 <body>
@@ -538,67 +539,11 @@ function cardArtwork(c,index){
  }
  if(system==="tarot"&&!TAROT_MAJOR_ART[c.name]){
   const parts=c.name.split("・"),suitName=parts[0],rankName=parts[1]||"Ace";
-  const suitIndex={"權杖":0,"聖杯":1,"寶劍":2,"錢幣":3}[suitName]??0;
-  const rankNames=["Ace","二","三","四","五","六","七","八","九","十","侍者","騎士","皇后","國王"];
-  const rankIndex=Math.max(0,rankNames.indexOf(rankName));
-  const count=Math.min(10,rankIndex+1),court=rankIndex>=10;
-  const palettes=[
-   ["#a66d43","#493528","#ead8b5","#c28a54"],
-   ["#a96870","#50383d","#f0dfca","#c98c91"],
-   ["#647c8b","#303d49","#e4dfcf","#9eafb4"],
-   ["#a88b50","#4c4432","#efe3c5","#c7ad70"]
-  ];
-  const p=palettes[suitIndex],uid="minorScene"+index;
-  const suitGlyph=["杖","杯","劍","幣"][suitIndex];
-  const emblem=(x,y,scale=1,rot=0)=>{
-   const shapes=[
-    '<path d="M0 16Q-2 0 0-17M0-8q-12-10-13-2 5 8 13 7m0 4q12-10 13-2-5 8-13 7" fill="none" stroke="'+p[1]+'" stroke-width="3" stroke-linecap="round"/><path d="M0-18l-4-7 4-5 4 5Z" fill="'+p[3]+'" stroke="'+p[1]+'" stroke-width="1"/>',
-    '<path d="M-12-14h24l-3 19q-9 11-18 0Z" fill="'+p[2]+'" stroke="'+p[1]+'" stroke-width="2"/><path d="M12-10q13-3 11 8-1 7-12 5" fill="none" stroke="'+p[1]+'" stroke-width="2.5"/><path d="M-6-4h12M-4 11h8" stroke="'+p[3]+'" stroke-width="2"/>',
-    '<path d="M0-25L7-4 0 3-7-4Z" fill="'+p[2]+'" stroke="'+p[1]+'" stroke-width="1.5"/><path d="M0 3v24M-12 9H12" stroke="'+p[1]+'" stroke-width="3" stroke-linecap="round"/>',
-    '<circle r="17" fill="'+p[3]+'" stroke="'+p[1]+'" stroke-width="2"/><circle r="12" fill="none" stroke="'+p[2]+'" stroke-width="1.5"/><path d="M0-10L3-3 10 0 3 3 0 10-3 3-10 0-3-3Z" fill="'+p[1]+'"/>'
-   ];
-   return '<g transform="translate('+x+' '+y+') rotate('+rot+') scale('+scale+')">'+shapes[suitIndex]+'</g>';
-  };
-  const bg='<rect x="4" y="4" width="112" height="142" fill="#d8c4a0"/><rect x="7" y="7" width="106" height="136" fill="url(#'+uid+'sky)"/><circle cx="91" cy="25" r="13" fill="#f2dfb8" opacity=".7"/><path d="M7 93Q28 75 49 91T88 87t25 5v51H7Z" fill="'+p[1]+'" opacity=".45"/><path d="M7 112q24-16 48-5t58-5v41H7Z" fill="#394b40" opacity=".38"/>';
-  const person=(x,y,scale=1,pose=0,robe=p[0])=>'<g transform="translate('+x+' '+y+') scale('+scale+')"><circle cx="0" cy="-23" r="7" fill="#d8ad87" stroke="#624a3a" stroke-width="1"/><path d="M-7-26q2-11 10-8 7 2 5 11l-5-4-9 3Z" fill="#554337"/><path d="M-11-14Q0-21 11-14L16 17H-16Z" fill="'+robe+'" stroke="#49382e" stroke-width="1.5"/><path d="M-8-9L'+(pose===1?'-22 7':'-17 4')+'M8-9L'+(pose===2?'23 -2':'17 4')+'" stroke="#d8ad87" stroke-width="4" stroke-linecap="round"/><path d="M-8 17l-3 13m19-13 3 13" stroke="#514035" stroke-width="4" stroke-linecap="round"/><path d="M-8-7h16" stroke="'+p[2]+'" stroke-width="1.4"/></g>';
-  const objectCount= court?1:count;
-  const objectPositions=objectCount===1?[[60,77]]:objectCount===2?[[39,77],[81,77]]:objectCount===3?[[34,55],[60,92],[86,55]]:objectCount===4?[[38,52],[82,52],[38,104],[82,104]]:objectCount===5?[[35,48],[85,48],[60,77],[35,108],[85,108]]:objectCount===6?[[36,43],[84,43],[36,77],[84,77],[36,111],[84,111]]:objectCount===7?[[34,39],[86,39],[34,68],[86,68],[60,83],[34,113],[86,113]]:objectCount===8?[[35,35],[85,35],[35,62],[85,62],[35,90],[85,90],[35,117],[85,117]]:objectCount===9?[[35,31],[85,31],[35,56],[85,56],[60,75],[35,98],[85,98],[35,123],[85,123]]:[[35,29],[85,29],[35,51],[85,51],[35,73],[85,73],[35,95],[85,95],[35,117],[85,117]];
-  let objects="";
-  if(court){
-   const robe=rankIndex===10?"#a77a53":rankIndex===11?"#8e9c9b":rankIndex===12?"#9b6e78":"#9c8655";
-   objects=person(60,88,1.75,rankIndex===11?2:1,robe)+emblem(88,83,.8);
-   if(rankIndex===11) objects+='<path d="M19 108q18-25 32-20l9 15" fill="none" stroke="#594437" stroke-width="6"/><path d="M20 109l-4 12m40-17 8 11" stroke="#594437" stroke-width="4"/>';
-   if(rankIndex===12||rankIndex===13) objects+='<path d="M45 51l3-13 12 9 12-9 3 13Z" fill="'+p[3]+'" stroke="'+p[1]+'" stroke-width="1.5"/><path d="M46 50h28" stroke="'+p[2]+'" stroke-width="2"/>';
-   if(rankIndex===10) objects+='<path d="M48 51q12-14 24 0" fill="none" stroke="'+p[3]+'" stroke-width="4"/>';
-  }else if(rankIndex===0){
-   objects='<path d="M15 65q11-18 24-4l9 10" fill="none" stroke="#d8ad87" stroke-width="10" stroke-linecap="round"/>'+emblem(61,76,1.55);
-   objects+='<path d="M23 113q37-26 74 0" fill="none" stroke="'+p[3]+'" stroke-width="2"/>';
-  }else if(rankIndex===1){
-   objects=person(38,91,.9,1)+person(82,91,.9,2)+emblem(60,63,.72);
-  }else if(rankIndex===2){
-   objects=person(60,87,1.15,2)+emblem(34,60,.62)+emblem(86,60,.62);
-  }else if(rankIndex===3){
-   objects=person(60,91,1.35,0)+ '<path d="M25 58q35-34 70 0" fill="none" stroke="'+p[3]+'" stroke-width="5"/>'+emblem(38,48,.48)+emblem(82,48,.48);
-  }else if(rankIndex===4){
-   objects=person(60,93,1.1,1)+emblem(35,48,.62)+emblem(85,48,.62)+ '<path d="M22 112l18-14m58 14L80 98" stroke="'+p[1]+'" stroke-width="3"/>';
-  }else if(rankIndex===5){
-   objects=person(60,91,1.12,2)+emblem(35,54,.58)+emblem(85,54,.58)+ '<path d="M19 119q41-26 82 0" fill="none" stroke="'+p[3]+'" stroke-width="3"/>';
-  }else if(rankIndex===6){
-   objects=person(60,90,1.15,1)+emblem(34,44,.58)+emblem(86,44,.58)+emblem(34,112,.5)+emblem(86,112,.5);
-  }else if(rankIndex===7){
-   objects=person(60,91,1.12,2)+ '<path d="M23 44l74 69M97 44L23 113" stroke="'+p[3]+'" stroke-opacity=".55" stroke-width="2"/>'+emblem(36,52,.48)+emblem(84,52,.48)+emblem(36,108,.48)+emblem(84,108,.48);
-  }else if(rankIndex===8){
-   objects=person(60,91,1.08,1)+ '<path d="M18 112q42-24 84 0" fill="none" stroke="'+p[3]+'" stroke-width="4"/>'+emblem(36,42,.5)+emblem(84,42,.5)+emblem(36,74,.5)+emblem(84,74,.5)+emblem(36,109,.5)+emblem(84,109,.5);
-  }else{
-   objects=person(60,89,1.2,0)+ '<path d="M18 115q42-25 84 0" fill="none" stroke="'+p[3]+'" stroke-width="4"/>'+objectPositions.map((xy,i)=>emblem(xy[0],xy[1],.34,i%2?180:0)).join("");
-  }
-  if(!court&&rankIndex>1&&rankIndex<10){
-   const visible=objectPositions.slice(0,Math.min(count,10));
-   objects+=visible.map((xy,i)=>emblem(xy[0],xy[1],rankIndex>=7?.34:.43,i%2?180:0)).join("");
-  }
-  const stars='<path d="M23 24l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" fill="#f7ebd1"/><path d="M99 55l2 4 4 2-4 2-2 4-2-4-4-2 4-2Z" fill="#f7ebd1"/>';
-  const label=String(rankIndex+1).padStart(2,"0");
-  return '<svg viewBox="0 0 120 150" role="img" aria-label="'+esc(c.name)+' 塔羅敘事場景插畫" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+p[2]+'"/><stop offset=".62" stop-color="#d9c29b"/><stop offset="1" stop-color="'+p[0]+'"/></linearGradient><linearGradient id="'+uid+'shade" x2="0" y2="1"><stop stop-color="#fff4df" stop-opacity=".12"/><stop offset="1" stop-color="'+p[1]+'" stop-opacity=".2"/></linearGradient><filter id="'+uid+'grain"><feTurbulence type="fractalNoise" baseFrequency=".6" numOctaves="2"/><feColorMatrix values="0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .27 0 0 0 .12 0"/></filter></defs>'+bg+stars+'<rect x="8" y="8" width="104" height="134" fill="url(#'+uid+'shade)"/><g>'+objects+'</g><path d="M13 123q23-9 47 0t47 0" fill="none" stroke="#e8d5b4" stroke-opacity=".65" stroke-width="1.3"/><rect x="4" y="4" width="112" height="142" fill="none" stroke="'+p[1]+'" stroke-width="2"/><rect x="8" y="8" width="104" height="134" fill="none" stroke="'+p[3]+'" stroke-width=".9"/><path d="M12 25V12h13m70 0h13v13M12 125v13h13m70 0h13v-13" fill="none" stroke="'+p[3]+'" stroke-width="1.5"/><rect x="11" y="12" width="15" height="12" rx="2" fill="'+p[1]+'"/><text x="18.5" y="20.5" text-anchor="middle" font-size="6" fill="'+p[2]+'">'+label+'</text><text x="60" y="136" text-anchor="middle" font-family="Georgia,serif" font-size="6.2" letter-spacing=".8" fill="'+p[1]+'">'+suitName.toUpperCase()+'</text><rect x="5" y="5" width="110" height="140" filter="url(#'+uid+'grain)" opacity=".28"/></svg>';
+  const suitFiles={"權杖":"Wands","聖杯":"Cups","寶劍":"Swords","錢幣":"Pents"};
+  const rankFiles={"Ace":"01","二":"02","三":"03","四":"04","五":"05","六":"06","七":"07","八":"08","九":"09","十":"10","侍者":"11","騎士":"12","皇后":"13","國王":"14"};
+  const imageFile=(suitFiles[suitName]||"Wands")+(rankFiles[rankName]||"01")+".jpg";
+  const imageUrl="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+imageFile;
+  return '<img class="tarot-minor-art" src="'+imageUrl+'" alt="'+esc(c.name)+' 塔羅完整牌面插畫" loading="eager" decoding="async">';
  }
  if(system==="runes"){
   const rune=esc(c.symbol||"ᚠ");
