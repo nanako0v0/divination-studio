@@ -575,10 +575,39 @@ body>header,body>main,body>footer{position:relative;z-index:1}
  pointer-events:none;z-index:1;opacity:.52;filter:blur(1.6px);
 }
 body>header,body>main,body>footer{position:relative;z-index:2}
+
+/* Separate landing, divination, and history pages */
+.landing-screen{display:none;position:relative;z-index:2;min-height:100svh;padding:30px 22px;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+body.landing-page .landing-screen{display:flex}
+body.landing-page>header,body.landing-page>main,body.landing-page>footer{display:none!important}
+.landing-brand{font-size:11px;letter-spacing:5px;color:var(--gold);margin-bottom:22px}
+.landing-screen h1{font-size:clamp(32px,7vw,48px);letter-spacing:8px;margin:0 0 12px;color:var(--text);text-shadow:0 3px 22px rgba(255,241,181,.16)}
+.landing-screen>p{font-size:12px;letter-spacing:2px;color:var(--muted);margin:0 0 46px}
+.landing-actions{display:flex;flex-direction:column;gap:15px;width:min(310px,88vw)}
+.landing-actions button{width:100%;padding:16px 20px;border:1px solid rgba(255,241,181,.38);border-radius:14px;background:linear-gradient(135deg,rgba(255,241,181,.15),rgba(193,219,232,.08),rgba(45,31,29,.48));color:var(--gold);font:inherit;font-size:15px;letter-spacing:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 10px 28px rgba(10,5,4,.24);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);cursor:pointer;transition:transform .25s,border-color .25s,box-shadow .25s}
+.landing-actions button:hover{transform:translateY(-2px);border-color:rgba(255,241,181,.75);box-shadow:0 0 22px rgba(193,219,232,.14),0 12px 30px rgba(10,5,4,.28)}
+.landing-foot{position:absolute;bottom:24px;color:rgba(255,241,181,.42);font-size:9px;letter-spacing:3px}
+body.app-page .landing-screen,body.history-page .landing-screen{display:none}
+body.app-page .history-trigger{display:none!important}
+body.history-page>header,body.history-page>main,body.history-page>footer{display:none!important}
+body.history-page .history-modal{position:relative;inset:auto;z-index:2;min-height:100svh;display:flex;align-items:flex-start;justify-content:center;padding:clamp(24px,6vh,60px) 18px;background:transparent;backdrop-filter:none}
+body.history-page .history-dialog{width:min(760px,100%);max-height:none;overflow:visible;background:linear-gradient(145deg,rgba(56,39,37,.78),rgba(36,25,24,.72));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.history-home{display:block;margin:0 0 20px;padding:8px 13px;border:1px solid rgba(255,241,181,.28);border-radius:999px;background:rgba(193,219,232,.08);color:var(--gold);font:inherit;cursor:pointer}
+body.history-page .history-close{display:none}
 </style>
 </head>
 <body>
 <canvas id="glassDustCanvas" aria-hidden="true"></canvas>
+<section class="landing-screen" id="landingScreen">
+ <div class="landing-brand">THE ART OF DIVINATION</div>
+ <h1>占卜工作室</h1>
+ <p>探索象徵 · 解讀未知 · 傾聽內在</p>
+ <div class="landing-actions">
+  <button type="button" id="startDivination">開始占卜</button>
+  <button type="button" id="openHistoryPage">了解歷史與由來</button>
+ </div>
+ <div class="landing-foot">DIVINATION STUDIO · EST. 2026</div>
+</section>
 
 <header><div class="brand">THE ART OF DIVINATION</div><h1>占卜工作室</h1><p>探索象徵 · 解讀未知 · 傾聽內在</p><div class="language-bar"><label for="siteLanguage">語言 / LANGUAGE</label><select id="siteLanguage" aria-label="選擇網站語言"><option value="zh-TW">繁體中文</option><option value="zh-CN">简体中文</option><option value="en-US">English (US)</option><option value="en-GB">English (UK)</option><option value="ja">日本語</option><option value="ko">한국어</option></select></div></header>
 <main>
@@ -627,7 +656,7 @@ body>header,body>main,body>footer{position:relative;z-index:2}
 <button class="history-trigger" id="historyOpen" type="button">了解歷史與由來</button>
 <div class="history-modal hidden" id="historyModal" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
  <div class="history-dialog">
-  <div class="history-head"><h2 id="historyTitle">占卜系統的歷史與由來</h2><button class="history-close" id="historyClose" type="button" aria-label="關閉">×</button></div>
+  <button type="button" class="history-home" id="historyHome">← 返回首頁</button><div class="history-head"><h2 id="historyTitle">占卜系統的歷史與由來</h2><button class="history-close" id="historyClose" type="button" aria-label="關閉">×</button></div>
   <div class="history-tabs" role="tablist">
    <button class="history-tab active" data-history="tarot" type="button">塔羅牌</button>
    <button class="history-tab" data-history="lenormand" type="button">雷諾曼</button>
@@ -692,14 +721,32 @@ function showHistory(which){
  const key=which||system;
  $("historyContent").innerHTML=historyData[key];
  document.querySelectorAll(".history-tab").forEach(b=>b.classList.toggle("active",b.dataset.history===key));
+ document.body.classList.remove("landing-page","app-page");
+ document.body.classList.add("history-page");
  $("historyModal").classList.remove("hidden");
- $("historyClose").focus();
+ window.scrollTo(0,0);
 }
+function showLanding(){
+ $("historyModal").classList.add("hidden");
+ document.body.classList.remove("history-page","app-page","result-page");
+ document.body.classList.add("landing-page");
+ window.scrollTo(0,0);
+}
+function showApp(){
+ $("historyModal").classList.add("hidden");
+ document.body.classList.remove("landing-page","history-page");
+ document.body.classList.add("app-page");
+ window.scrollTo(0,0);
+}
+$("startDivination").addEventListener("click",showApp);
+$("openHistoryPage").addEventListener("click",()=>showHistory("tarot"));
 $("historyOpen").addEventListener("click",()=>showHistory(system));
 document.querySelectorAll(".history-tab").forEach(b=>b.addEventListener("click",()=>showHistory(b.dataset.history)));
-$("historyClose").addEventListener("click",()=>$("historyModal").classList.add("hidden"));
-$("historyModal").addEventListener("click",e=>{if(e.target===$("historyModal"))$("historyModal").classList.add("hidden");});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")$("historyModal").classList.add("hidden");});
+$("historyHome").addEventListener("click",showLanding);
+$("historyClose").addEventListener("click",showLanding);
+$("historyModal").addEventListener("click",e=>{if(e.target===$("historyModal"))showLanding();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.classList.contains("history-page"))showLanding();});
+document.body.classList.add("landing-page");
 
 function setup(){ $("spread").innerHTML="";spreads[system].forEach(s=>{let o=document.createElement("option");o.value=s[1];o.textContent=s[0];$("spread").append(o)});updateCount();preloadDeckImages(system);}
 function updateCount(){let n=Number($("spread").value);$("count").innerHTML="";let o=document.createElement("option");o.value=n;o.textContent=n+" 張";$("count").append(o);}
