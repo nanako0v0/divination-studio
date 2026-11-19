@@ -572,11 +572,12 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 /* Floating glass dust particles */
 #glassDustCanvas{
  position:fixed;inset:0;width:100%;height:100%;
- pointer-events:none;z-index:0;opacity:1;
+ pointer-events:none;z-index:1;opacity:1;
 }
+body>header,body>main,body>footer{position:relative;z-index:2}
 </style>
 </head>
-<body>\n
+<body>
 <canvas id="glassDustCanvas" aria-hidden="true"></canvas>
 
 <header><div class="brand">THE ART OF DIVINATION</div><h1>占卜工作室</h1><p>探索象徵 · 解讀未知 · 傾聽內在</p><div class="language-bar"><label for="siteLanguage">語言 / LANGUAGE</label><select id="siteLanguage" aria-label="選擇網站語言"><option value="zh-TW">繁體中文</option><option value="zh-CN">简体中文</option><option value="en-US">English (US)</option><option value="en-GB">English (UK)</option><option value="ja">日本語</option><option value="ko">한국어</option></select></div></header>
@@ -940,7 +941,7 @@ $("siteLanguage").addEventListener("change",e=>setSiteLanguage(e.target.value));
   const count=Math.min(190,Math.max(85,Math.round(w*h/6500)));
   particles=Array.from({length:count},()=>({
    x:rand(0,w),y:rand(0,h),ox:0,oy:0,
-   vx:rand(-.12,.12),vy:rand(-.16,.12),
+   vx:rand(-.32,.32),vy:rand(-.28,.28),
    r:rand(.65,2.05),a:rand(.34,.9),
    phase:rand(0,Math.PI*2),speed:rand(.35,1.15),
    sparkle:Math.random()<.18
@@ -953,6 +954,7 @@ $("siteLanguage").addEventListener("change",e=>setSiteLanguage(e.target.value));
  }
  window.addEventListener("pointermove",point,{passive:true});
  window.addEventListener("pointerdown",point,{passive:true});
+ window.addEventListener("touchmove",function(e){if(e.touches&&e.touches[0])point(e.touches[0])},{passive:true});
  window.addEventListener("pointerup",()=>{pointer.until=performance.now()+450},{passive:true});
  window.addEventListener("resize",resize,{passive:true});
  function draw(t){
@@ -961,18 +963,18 @@ $("siteLanguage").addEventListener("change",e=>setSiteLanguage(e.target.value));
   ctx.clearRect(0,0,w,h);
   if(t>pointer.until)pointer.active=false;
   for(const p of particles){
-   p.phase+=.012*p.speed*dt;
-   let ax=Math.sin(p.phase*.7)*.012,ay=Math.cos(p.phase*.53)*.01;
+   p.phase+=.022*p.speed*dt;
+   let ax=Math.sin(p.phase*.7)*.026,ay=Math.cos(p.phase*.53)*.022;
    const dx=p.x-pointer.x,dy=p.y-pointer.y,dist=Math.hypot(dx,dy);
-   if(pointer.active&&dist<112&&dist>0.01){
-    const force=(1-dist/112)*.48;
+   if(pointer.active&&dist<145&&dist>0.01){
+    const force=(1-dist/145)*.95;
     ax+=(dx/dist)*force;ay+=(dy/dist)*force;
-    p.vx+=(dx/dist)*force*.10;p.vy+=(dy/dist)*force*.10;
+    p.vx+=(dx/dist)*force*.16;p.vy+=(dy/dist)*force*.10;
    }
-   p.vx=(p.vx+ax*dt)*.986;p.vy=(p.vy+ay*dt)*.986;
+   p.vx=(p.vx+ax*dt)*.992;p.vy=(p.vy+ay*dt)*.992;
    p.x+=p.vx*dt;p.y+=p.vy*dt;
    /* Gently return scattered particles toward their resting positions */
-   p.vx+=(p.ox-p.x)*.0009*dt;p.vy+=(p.oy-p.y)*.0009*dt;
+   p.vx+=(p.ox-p.x)*.00016*dt;p.vy+=(p.oy-p.y)*.00016*dt;
    if(p.x<-8)p.x=w+8;if(p.x>w+8)p.x=-8;
    if(p.y<-8)p.y=h+8;if(p.y>h+8)p.y=-8;
    const twinkle=.72+.28*Math.sin(p.phase*1.7);
@@ -998,7 +1000,8 @@ $("siteLanguage").addEventListener("change",e=>setSiteLanguage(e.target.value));
   particles.forEach(p=>{ctx.beginPath();ctx.fillStyle="rgba(255,252,244,"+(p.a*.55)+")";ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()});
  }
 })();
-\n/* Gentle parallax: light haze drifts slightly as the page scrolls */
+
+/* Gentle parallax: light haze drifts slightly as the page scrolls */
 (function(){
  let ticking=false;
  window.addEventListener("scroll",function(){
