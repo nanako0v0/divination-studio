@@ -499,6 +499,30 @@ body{top:0!important}
 @keyframes pickedIn{from{opacity:0;transform:translateY(-14px) scale(.88)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:520px){.mode-option{min-height:122px;padding:14px 6px}.fan-scroll{margin:0 -4px;width:calc(100% + 8px);padding-left:12px}.fan-card{flex-basis:53px;width:53px;height:84px;margin-left:-33px}.picked-back{width:53px;height:84px}}
 
+
+/* Compact two-row card spread: keeps the poker-style overlapping deck */
+.fan-scroll{overflow-x:auto;overflow-y:hidden;padding:24px 14px 28px}
+.fan-deck{
+ display:grid;
+ grid-auto-flow:column;
+ grid-template-rows:repeat(2,100px);
+ grid-auto-columns:23px;
+ align-items:center;
+ align-content:center;
+ gap:8px 0;
+ width:max-content;
+ min-width:100%;
+ padding:12px 28px 16px 18px;
+ animation:fanSlideIn .85s cubic-bezier(.2,.8,.2,1) both;
+}
+.fan-card{margin-left:0}
+.fan-card:first-child{margin-left:0}
+@media(max-width:520px){
+ .fan-scroll{padding:20px 10px 24px}
+ .fan-deck{grid-template-rows:repeat(2,92px);grid-auto-columns:21px;gap:7px 0;padding:10px 22px 14px 14px}
+ .fan-card{flex-basis:53px;width:53px;height:84px;margin-left:0}
+}
+
 </style>
 </head>
 <body>
