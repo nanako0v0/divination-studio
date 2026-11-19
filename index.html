@@ -568,9 +568,17 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 @media(prefers-reduced-motion:reduce){
  body::before,body::after{animation:none}
 }
+
+/* Floating glass dust particles */
+#glassDustCanvas{
+ position:fixed;inset:0;width:100%;height:100%;
+ pointer-events:none;z-index:0;opacity:1;
+}
 </style>
 </head>
-<body>
+<body>\n
+<canvas id="glassDustCanvas" aria-hidden="true"></canvas>
+
 <header><div class="brand">THE ART OF DIVINATION</div><h1>占卜工作室</h1><p>探索象徵 · 解讀未知 · 傾聽內在</p><div class="language-bar"><label for="siteLanguage">語言 / LANGUAGE</label><select id="siteLanguage" aria-label="選擇網站語言"><option value="zh-TW">繁體中文</option><option value="zh-CN">简体中文</option><option value="en-US">English (US)</option><option value="en-GB">English (UK)</option><option value="ja">日本語</option><option value="ko">한국어</option></select></div></header>
 <main>
 <div id="google_translate_element" aria-hidden="true"></div>
@@ -912,7 +920,85 @@ $("siteLanguage").addEventListener("change",e=>setSiteLanguage(e.target.value));
  document.head.appendChild(script);
 })();
 
-/* Gentle parallax: light haze drifts slightly as the page scrolls */
+
+/* Interactive floating dust: particles scatter away from a passing finger */
+(function(){
+ const canvas=document.getElementById("glassDustCanvas");
+ if(!canvas)return;
+ const ctx=canvas.getContext("2d",{alpha:true});
+ if(!ctx)return;
+ let w=0,h=0,dpr=1,particles=[],raf=0,last=0;
+ const pointer={x:-9999,y:-9999,active:false,until:0};
+ const reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+ const rand=(a,b)=>a+Math.random()*(b-a);
+ function resize(){
+  dpr=Math.min(window.devicePixelRatio||1,2);
+  w=window.innerWidth;h=window.innerHeight;
+  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
+  canvas.style.width=w+"px";canvas.style.height=h+"px";
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const count=Math.min(190,Math.max(85,Math.round(w*h/6500)));
+  particles=Array.from({length:count},()=>({
+   x:rand(0,w),y:rand(0,h),ox:0,oy:0,
+   vx:rand(-.12,.12),vy:rand(-.16,.12),
+   r:rand(.65,2.05),a:rand(.34,.9),
+   phase:rand(0,Math.PI*2),speed:rand(.35,1.15),
+   sparkle:Math.random()<.18
+  }));
+  particles.forEach(p=>{p.ox=p.x;p.oy=p.y});
+ }
+ function point(e){
+  pointer.x=e.clientX;pointer.y=e.clientY;
+  pointer.active=true;pointer.until=performance.now()+850;
+ }
+ window.addEventListener("pointermove",point,{passive:true});
+ window.addEventListener("pointerdown",point,{passive:true});
+ window.addEventListener("pointerup",()=>{pointer.until=performance.now()+450},{passive:true});
+ window.addEventListener("resize",resize,{passive:true});
+ function draw(t){
+  if(document.hidden){raf=0;return}
+  const dt=Math.min(2,(t-last)/16.67||1);last=t;
+  ctx.clearRect(0,0,w,h);
+  if(t>pointer.until)pointer.active=false;
+  for(const p of particles){
+   p.phase+=.012*p.speed*dt;
+   let ax=Math.sin(p.phase*.7)*.012,ay=Math.cos(p.phase*.53)*.01;
+   const dx=p.x-pointer.x,dy=p.y-pointer.y,dist=Math.hypot(dx,dy);
+   if(pointer.active&&dist<112&&dist>0.01){
+    const force=(1-dist/112)*.48;
+    ax+=(dx/dist)*force;ay+=(dy/dist)*force;
+    p.vx+=(dx/dist)*force*.10;p.vy+=(dy/dist)*force*.10;
+   }
+   p.vx=(p.vx+ax*dt)*.986;p.vy=(p.vy+ay*dt)*.986;
+   p.x+=p.vx*dt;p.y+=p.vy*dt;
+   /* Gently return scattered particles toward their resting positions */
+   p.vx+=(p.ox-p.x)*.0009*dt;p.vy+=(p.oy-p.y)*.0009*dt;
+   if(p.x<-8)p.x=w+8;if(p.x>w+8)p.x=-8;
+   if(p.y<-8)p.y=h+8;if(p.y>h+8)p.y=-8;
+   const twinkle=.72+.28*Math.sin(p.phase*1.7);
+   const alpha=Math.max(.08,Math.min(1,p.a*twinkle));
+   ctx.beginPath();ctx.fillStyle="rgba(255,252,244,"+alpha+")";
+   ctx.shadowColor="rgba(255,255,255,"+(p.sparkle?.95:.58)+")";
+   ctx.shadowBlur=p.sparkle?12:6;
+   ctx.arc(p.x,p.y,p.r*(p.sparkle?1.08:1),0,Math.PI*2);ctx.fill();
+   if(p.sparkle){
+    ctx.strokeStyle="rgba(255,255,255,"+(alpha*.38)+")";ctx.lineWidth=.55;
+    ctx.beginPath();ctx.moveTo(p.x-3.5,p.y);ctx.lineTo(p.x+3.5,p.y);
+    ctx.moveTo(p.x,p.y-3.5);ctx.lineTo(p.x,p.y+3.5);ctx.stroke();
+   }
+  }
+  ctx.shadowBlur=0;
+  raf=requestAnimationFrame(draw);
+ }
+ function start(){if(!raf){last=performance.now();raf=requestAnimationFrame(draw)}}
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden)start();else if(raf){cancelAnimationFrame(raf);raf=0}});
+ resize();
+ if(!reduced)start();
+ else{
+  particles.forEach(p=>{ctx.beginPath();ctx.fillStyle="rgba(255,252,244,"+(p.a*.55)+")";ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()});
+ }
+})();
+\n/* Gentle parallax: light haze drifts slightly as the page scrolls */
 (function(){
  let ticking=false;
  window.addEventListener("scroll",function(){
