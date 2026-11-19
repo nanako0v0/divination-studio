@@ -524,48 +524,50 @@ body{top:0!important}
 }
 
 
-/* Frosted-glass light particles: soft, slow and subtly affected by scrolling */
+/* More visible frosted-glass bokeh: softly glowing milk-white light */
 body{isolation:isolate;position:relative}
-body::before,body::after{content:"";position:fixed;inset:-12%;pointer-events:none;z-index:0;will-change:transform,opacity}
+body::before,body::after{content:"";position:fixed;inset:-15%;pointer-events:none;z-index:0;will-change:transform,opacity}
 body::before{
  background:
-  radial-gradient( circle at 12% 24%, rgba(255,255,255,.34) 0, rgba(255,255,255,.13) 2px, transparent 17px),
-  radial-gradient( circle at 29% 72%, rgba(255,250,235,.26) 0, rgba(255,255,255,.09) 3px, transparent 23px),
-  radial-gradient( circle at 53% 18%, rgba(255,255,255,.30) 0, rgba(255,255,255,.10) 2px, transparent 19px),
-  radial-gradient( circle at 76% 38%, rgba(255,255,255,.28) 0, rgba(255,255,255,.10) 3px, transparent 22px),
-  radial-gradient( circle at 88% 78%, rgba(255,255,255,.24) 0, rgba(255,255,255,.08) 2px, transparent 18px),
-  radial-gradient( circle at 42% 92%, rgba(255,255,255,.20) 0, transparent 26px);
- background-size:100% 100%;
- filter:blur(9px);
- opacity:.48;
+  radial-gradient(circle at 9% 18%,rgba(255,255,255,.72) 0,rgba(255,255,255,.28) 5px,rgba(255,255,255,.10) 16px,transparent 38px),
+  radial-gradient(circle at 23% 62%,rgba(255,250,239,.58) 0,rgba(255,255,255,.18) 7px,transparent 43px),
+  radial-gradient(circle at 39% 31%,rgba(255,255,255,.48) 0,rgba(255,255,255,.16) 5px,transparent 34px),
+  radial-gradient(circle at 57% 13%,rgba(255,255,255,.66) 0,rgba(255,255,255,.22) 6px,transparent 42px),
+  radial-gradient(circle at 72% 49%,rgba(255,255,255,.56) 0,rgba(255,255,255,.18) 7px,transparent 44px),
+  radial-gradient(circle at 91% 26%,rgba(255,250,239,.68) 0,rgba(255,255,255,.22) 5px,transparent 39px),
+  radial-gradient(circle at 84% 83%,rgba(255,255,255,.48) 0,rgba(255,255,255,.15) 6px,transparent 37px),
+  radial-gradient(circle at 45% 88%,rgba(255,255,255,.52) 0,rgba(255,255,255,.17) 7px,transparent 42px),
+  radial-gradient(circle at 14% 91%,rgba(255,255,255,.42) 0,transparent 34px);
+ filter:blur(7px);
+ opacity:.72;
  transform:translate3d(0,var(--glass-shift,0px),0);
- animation:glassParticles 13s ease-in-out infinite alternate;
+ animation:glassParticles 11s ease-in-out infinite alternate;
 }
 body::after{
  background:
-  radial-gradient(ellipse at 18% 35%,rgba(255,255,255,.075),transparent 28%),
-  radial-gradient(ellipse at 82% 62%,rgba(219,231,239,.065),transparent 30%),
-  radial-gradient(ellipse at 52% 8%,rgba(255,248,231,.045),transparent 24%);
- filter:blur(30px);
- opacity:.72;
- transform:translate3d(0,calc(var(--glass-shift,0px)*.55),0);
- animation:glassGlow 17s ease-in-out infinite alternate;
+  radial-gradient(ellipse at 16% 34%,rgba(255,255,255,.15),transparent 31%),
+  radial-gradient(ellipse at 81% 61%,rgba(219,231,239,.13),transparent 34%),
+  radial-gradient(ellipse at 51% 7%,rgba(255,248,231,.11),transparent 28%),
+  radial-gradient(ellipse at 43% 76%,rgba(255,255,255,.08),transparent 30%);
+ filter:blur(27px);
+ opacity:.82;
+ transform:translate3d(0,calc(var(--glass-shift,0px)*.72),0);
+ animation:glassGlow 15s ease-in-out infinite alternate;
 }
 body>header,body>main,body>footer{position:relative;z-index:1}
 @keyframes glassParticles{
- 0%{opacity:.28;filter:blur(11px)}
- 45%{opacity:.52;filter:blur(8px)}
- 100%{opacity:.36;filter:blur(13px)}
+ 0%{opacity:.48;filter:blur(9px)}
+ 48%{opacity:.88;filter:blur(5px)}
+ 100%{opacity:.62;filter:blur(11px)}
 }
 @keyframes glassGlow{
- 0%{opacity:.42}
- 50%{opacity:.78}
- 100%{opacity:.55}
+ 0%{opacity:.48}
+ 50%{opacity:.9}
+ 100%{opacity:.62}
 }
 @media(prefers-reduced-motion:reduce){
  body::before,body::after{animation:none}
 }
-
 </style>
 </head>
 <body>
@@ -917,7 +919,7 @@ $("siteLanguage").addEventListener("change",e=>setSiteLanguage(e.target.value));
   if(ticking)return;
   ticking=true;
   requestAnimationFrame(function(){
-   const shift=-Math.min(window.scrollY*.035,42);
+   const shift=-Math.min(window.scrollY*.085,82);
    document.documentElement.style.setProperty("--glass-shift",shift+"px");
    ticking=false;
   });
