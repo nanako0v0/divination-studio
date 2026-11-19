@@ -456,6 +456,35 @@ body{top:0!important}
   object-fit:contain!important;object-position:center center!important;
   transform:none!important;
 }
+
+/* Manual card draw: a deck slides into a tactile playing-card ribbon */
+.draw-mode{margin-top:22px}
+.draw-mode-title{text-align:center;color:var(--gold);font-size:12px;letter-spacing:3px;margin:0 0 12px}
+.draw-mode-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode-option{min-height:132px;padding:18px 10px;border:1px solid rgba(255,241,181,.3);border-radius:14px;color:var(--gold);background:linear-gradient(145deg,rgba(255,241,181,.13),rgba(193,219,232,.07),rgba(30,20,19,.55));backdrop-filter:blur(18px);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 10px 24px rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:transform .22s,border-color .22s,box-shadow .22s}
+.mode-option:hover,.mode-option:focus-visible{transform:translateY(-3px);border-color:rgba(255,241,181,.75);box-shadow:0 0 24px rgba(255,241,181,.13),0 12px 28px rgba(0,0,0,.25)}
+.mode-option strong{font-size:15px;letter-spacing:2px}.mode-option small{font-size:10px;color:var(--muted);font-weight:300}.mode-icon{font-size:26px;color:var(--light)}
+.manual-hint{text-align:center;color:var(--muted);font-size:12px;line-height:1.8;margin:12px 0 18px}
+.fan-start{margin-bottom:12px}
+.fan-scroll{width:100%;overflow-x:auto;overflow-y:hidden;padding:28px 18px 34px;scrollbar-color:rgba(255,241,181,.38) rgba(255,255,255,.04);scrollbar-width:thin;touch-action:pan-x}
+.fan-deck{display:flex;align-items:center;width:max-content;min-width:100%;padding:12px 30px 18px 18px;animation:fanSlideIn .85s cubic-bezier(.2,.8,.2,1) both}
+.fan-card{position:relative;flex:0 0 58px;width:58px;height:92px;margin-left:-35px;padding:0;border:1px solid rgba(255,241,181,.72);border-radius:7px;background:radial-gradient(circle at 50% 42%,rgba(193,219,232,.2),transparent 48%),repeating-linear-gradient(45deg,transparent 0 7px,rgba(255,241,181,.07) 8px 9px),linear-gradient(145deg,#684b42,#261a18 78%);box-shadow:0 7px 13px rgba(0,0,0,.34),inset 0 0 0 3px rgba(255,241,181,.08);color:var(--gold);transform:rotate(var(--tilt));transform-origin:50% 115%;transition:transform .22s,margin .22s,filter .22s,opacity .25s;cursor:pointer}
+.fan-card:first-child{margin-left:0}
+.fan-card::before{content:"";position:absolute;inset:5px;border:1px solid rgba(255,241,181,.36);border-radius:4px;pointer-events:none}
+.fan-card-ornament{position:absolute;inset:30px 0 auto;text-align:center;font-size:23px;text-shadow:0 0 12px rgba(255,241,181,.45)}
+.fan-card-mark{position:absolute;bottom:10px;left:0;right:0;text-align:center;font:8px Georgia,serif;letter-spacing:2px;color:rgba(255,241,181,.7)}
+.fan-card:hover,.fan-card:focus-visible{z-index:5;transform:translateY(-18px) rotate(0deg) scale(1.08);filter:brightness(1.25);box-shadow:0 0 20px rgba(255,241,181,.22),0 12px 20px rgba(0,0,0,.42)}
+.fan-card.chosen{opacity:.18;transform:translateY(10px) rotate(0deg) scale(.92);pointer-events:none}
+@keyframes fanSlideIn{from{opacity:0;transform:translateX(-45px) scale(.94)}to{opacity:1;transform:translateX(0) scale(1)}}
+.picked-title{text-align:center;margin:12px 0;color:var(--gold);font-size:12px;letter-spacing:2px}
+.picked-cards{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;min-height:105px;padding:8px 0 18px}
+.picked-back{width:58px;height:90px;border:1px solid rgba(255,241,181,.72);border-radius:7px;background:repeating-linear-gradient(45deg,transparent 0 7px,rgba(255,241,181,.07) 8px 9px),linear-gradient(145deg,#684b42,#261a18);box-shadow:0 7px 15px rgba(0,0,0,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--gold);animation:pickedIn .35s ease both}
+.picked-back span{font-size:25px}.picked-back small{font-size:9px;margin-top:12px;color:var(--light)}
+#revealManual{margin-top:8px}
+.manual-reset{width:100%;margin-top:12px}
+@keyframes pickedIn{from{opacity:0;transform:translateY(-14px) scale(.88)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:520px){.mode-option{min-height:122px;padding:14px 6px}.fan-scroll{margin:0 -4px;width:calc(100% + 8px);padding-left:12px}.fan-card{flex-basis:53px;width:53px;height:84px;margin-left:-33px}.picked-back{width:53px;height:84px}}
+
 </style>
 </head>
 <body>
@@ -478,7 +507,24 @@ body{top:0!important}
 </div>
 <div class="grid"><div class="field"><label for="spread">選擇牌陣</label><select id="spread"></select></div><div class="field"><label for="count">抽取數量</label><select id="count"></select></div></div>
 <label class="toggle"><input type="checkbox" id="reversals" checked> 允許出現逆位</label>
-<button class="primary" id="draw">✧ 開始占卜 ✧</button>
+<div class="draw-mode" id="drawMode">
+ <div class="draw-mode-title">選擇抽牌方式</div>
+ <div class="draw-mode-options">
+  <button type="button" class="mode-option" id="manualMode"><span class="mode-icon">✧</span><strong>自行抽牌</strong><small>親自從展開的牌堆中挑選</small></button>
+  <button type="button" class="mode-option" id="computerMode"><span class="mode-icon">❖</span><strong>電腦抽牌</strong><small>由系統隨機抽取牌卡</small></button>
+ </div>
+</div>
+<section id="manualDraw" class="panel hidden">
+ <h2 class="result-title">✧ 親自挑選你的牌 ✧</h2>
+ <div class="manual-hint" id="manualHint">牌堆即將展開，請滑動牌堆並挑選。</div>
+ <button type="button" class="primary fan-start" id="fanStart">✧ 展開牌堆 ✧</button>
+ <div class="fan-scroll hidden" id="fanScroll"><div class="fan-deck" id="fanDeck"></div></div>
+ <div class="picked-title">已選取 <span id="pickedCount">0</span> / <span id="requiredCount">0</span> 張</div>
+ <div class="picked-cards" id="pickedCards"></div>
+ <button type="button" class="primary hidden" id="revealManual">✧ 翻開牌卡 ✧</button>
+ <button type="button" class="secondary manual-reset" id="cancelManual">返回抽牌方式</button>
+</section>
+<button class="primary hidden" id="draw">✧ 開始占卜 ✧</button>
 <section id="result" class="panel hidden">
 <h2 class="result-title">✧ 你的占卜結果 ✧</h2><div class="summary" id="summary"></div><div class="cards" id="cards"></div>
 <div class="actions"><button class="secondary" id="copy">複製 AI 解牌提示詞</button><button class="secondary" id="redraw">重新抽牌</button></div>
@@ -643,12 +689,73 @@ function cardArtwork(c,index){
  const scene=scenes[hash%scenes.length];
  return '<svg viewBox="0 0 120 150" role="img" aria-label="'+esc(c.name)+' 古典油畫插畫" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+uid+'paint" x2="0" y2="1"><stop stop-color="'+p[0]+'"/><stop offset=".58" stop-color="'+p[1]+'"/><stop offset="1" stop-color="'+p[2]+'"/></linearGradient><filter id="'+uid+'grain"><feTurbulence type="fractalNoise" baseFrequency=".65" numOctaves="3" seed="'+(hash%97)+'"/><feColorMatrix values="0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .27 0 0 0 .2 0"/></filter></defs><rect x="4" y="4" width="112" height="142" fill="url(#'+uid+'paint)"/><circle cx="90" cy="25" r="19" fill="'+p[3]+'" opacity=".72"/><path d="M4 91Q30 70 55 89t61-2v59H4Z" fill="'+p[2]+'" opacity=".8"/>'+scene+'<rect x="4" y="4" width="112" height="142" filter="url(#'+uid+'grain)" opacity=".5"/><rect x="8" y="8" width="104" height="134" fill="none" stroke="#d8c49c" stroke-width="2"/><path d="M13 19h10m74 0h10M13 131h10m74 0h10" stroke="#e5d3ad" stroke-width="2"/></svg>';
 }
-function draw(){let n=Number($("count").value),d=shuffle(deck());lastDraw=d.slice(0,n).map((c,i)=>({...c,reversed:system!=="runes"&&$("reversals").checked&&Math.random()<.5,position:(positions[n]||[])[i]||("第"+(i+1)+"張") }));render();}
-function render(){
-$("cards").innerHTML="";lastDraw.forEach((c,i)=>{let w=document.createElement("div");w.className="card-wrap";let card=document.createElement("div");card.className="card"+(system==="tarot"?" tarot-card":system==="lenormand"?" lenormand-card":"");let inner=document.createElement("div");inner.className="inner";let back=document.createElement("div");back.className="back";back.innerHTML="<span>✧</span><small>DIVINATION</small>";let front=document.createElement("div");front.className="front"+(c.reversed?" rev":"");front.dataset.system=system;let art=document.createElement("div");art.className="card-art";art.innerHTML=cardArtwork(c,i);let name=document.createElement("strong");name.textContent=c.name;let orient=document.createElement("small");orient.textContent=system==="runes"?"符文":(c.reversed?"逆位":"正位");front.append(art,name,orient);inner.append(back,front);card.append(inner);let pos=document.createElement("div");pos.className="position";pos.textContent=c.position;let meaning=document.createElement("div");meaning.className="meaning";meaning.textContent=c.meaning;w.append(card,pos,meaning);$("cards").append(w);setTimeout(()=>card.classList.add("flipped"),200+i*180);});
-$("summary").textContent=$("spread").selectedOptions[0].textContent+" · "+new Date().toLocaleString("zh-TW");$("prompt").textContent=makePrompt();$("result").classList.remove("hidden");$("result").scrollIntoView({behavior:"smooth",block:"start"});
+let manualDeck=[],manualPicked=[],manualActive=false;
+function decorateDraw(d,n){return d.slice(0,n).map((c,i)=>({...c,reversed:system!=="runes"&&$("reversals").checked&&Math.random()<.5,position:(positions[n]||[])[i]||("第"+(i+1)+"張")}));}
+function draw(){let n=Number($("count").value),d=shuffle(deck());lastDraw=decorateDraw(d,n);$("manualDraw").classList.add("hidden");$("result").classList.remove("hidden");render();}
+function startManual(){
+ manualActive=true;manualDeck=shuffle(deck());manualPicked=[];lastDraw=[];
+ $("result").classList.add("hidden");$("drawMode").classList.add("hidden");$("manualDraw").classList.remove("hidden");
+ $("fanScroll").classList.add("hidden");$("fanStart").classList.remove("hidden");$("fanDeck").innerHTML="";$("pickedCards").innerHTML="";
+ $("requiredCount").textContent=$("count").value;$("pickedCount").textContent="0";
+ $("manualHint").textContent="點擊「展開牌堆」，再從滑出的牌中挑選。";
+ $("revealManual").classList.add("hidden");$("fanStart").disabled=false;
+ $("manualDraw").scrollIntoView({behavior:"smooth",block:"start"});
 }
-$("draw").addEventListener("click",draw);$("redraw").addEventListener("click",draw);
+function spreadManualDeck(){
+ const tray=$("fanDeck");tray.innerHTML="";
+ manualDeck.forEach((c,i)=>{
+  const card=document.createElement("button");card.type="button";card.className="fan-card";card.setAttribute("aria-label","選取第 "+(i+1)+" 張蓋牌");
+  card.innerHTML='<span class="fan-card-ornament">✧</span><span class="fan-card-mark">DS</span>';
+  const angle=(i/(manualDeck.length-1)-.5)*12;
+  card.style.setProperty("--tilt",angle.toFixed(2)+"deg");
+  card.style.setProperty("--delay",Math.min(i*5,420)+"ms");
+  card.addEventListener("click",()=>pickManualCard(i,card));
+  tray.append(card);
+ });
+ $("fanStart").classList.add("hidden");$("fanScroll").classList.remove("hidden");
+ $("manualHint").textContent="左右滑動牌堆，憑直覺點選 "+$("count").value+" 張牌。";
+}
+function pickManualCard(index,element){
+ if(manualPicked.length>=Number($("count").value)||manualPicked.some(x=>x.index===index))return;
+ const card=manualDeck[index];const picked={...card,index,reversed:system!=="runes"&&$("reversals").checked&&Math.random()<.5,position:(positions[Number($("count").value)]||[])[manualPicked.length]||("第"+(manualPicked.length+1)+"張")};
+ manualPicked.push(picked);element.classList.add("chosen");element.disabled=true;
+ const back=document.createElement("div");back.className="picked-back";back.innerHTML='<span>✧</span><small>'+picked.position+'</small>';$("pickedCards").append(back);
+ $("pickedCount").textContent=manualPicked.length;
+ if(manualPicked.length===Number($("count").value)){
+  $("manualHint").textContent="已抽滿牌數，可以翻開牌卡了。";
+  $("revealManual").classList.remove("hidden");
+ }else $("manualHint").textContent="再挑選 "+(Number($("count").value)-manualPicked.length)+" 張牌。";
+}
+function revealManualCards(){
+ lastDraw=manualPicked.map(({index,...card})=>card);manualActive=false;render();
+ $("manualDraw").classList.add("hidden");$("drawMode").classList.remove("hidden");
+}
+function render(){
+ $("cards").innerHTML="";
+ lastDraw.forEach((c,i)=>{
+  let w=document.createElement("div");w.className="card-wrap";
+  let card=document.createElement("div");card.className="card"+(system==="tarot"?" tarot-card":system==="lenormand"?" lenormand-card":"");
+  let inner=document.createElement("div");inner.className="inner";
+  let back=document.createElement("div");back.className="back";back.innerHTML="<span>✧</span><small>DIVINATION</small>";
+  let front=document.createElement("div");front.className="front"+(c.reversed?" rev":"");front.dataset.system=system;
+  let art=document.createElement("div");art.className="card-art";art.innerHTML=cardArtwork(c,i);
+  let name=document.createElement("strong");name.textContent=c.name;
+  let orient=document.createElement("small");orient.textContent=system==="runes"?"符文":(c.reversed?"逆位":"正位");
+  front.append(art,name,orient);inner.append(back,front);card.append(inner);
+  let pos=document.createElement("div");pos.className="position";pos.textContent=c.position;
+  let meaning=document.createElement("div");meaning.className="meaning";meaning.textContent=c.meaning;
+  w.append(card,pos,meaning);$("cards").append(w);setTimeout(()=>card.classList.add("flipped"),200+i*180);
+ });
+ $("summary").textContent=$("spread").selectedOptions[0].textContent+" · "+new Date().toLocaleString("zh-TW");
+ $("prompt").textContent=makePrompt();$("result").classList.remove("hidden");
+ $("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+$("manualMode").addEventListener("click",startManual);
+$("computerMode").addEventListener("click",()=>{draw();$("drawMode").classList.remove("hidden");});
+$("fanStart").addEventListener("click",spreadManualDeck);
+$("revealManual").addEventListener("click",revealManualCards);
+$("cancelManual").addEventListener("click",()=>{$("manualDraw").classList.add("hidden");$("drawMode").classList.remove("hidden");});
+$("draw").addEventListener("click",draw);$("redraw").addEventListener("click",()=>{$("result").classList.add("hidden");$("drawMode").classList.remove("hidden");});
 $("copy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText($("prompt").textContent);$("copy").textContent="已複製！";}catch(e){let r=document.createElement("textarea");r.value=$("prompt").textContent;document.body.append(r);r.select();document.execCommand("copy");r.remove();$("copy").textContent="已複製！";}setTimeout(()=>$("copy").textContent="複製 AI 解牌提示詞",1800);});
 renderPresetQuestions("感情");
 setup();
