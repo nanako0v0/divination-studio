@@ -608,12 +608,44 @@ $("historyClose").addEventListener("click",()=>$("historyModal").classList.add("
 $("historyModal").addEventListener("click",e=>{if(e.target===$("historyModal"))$("historyModal").classList.add("hidden");});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")$("historyModal").classList.add("hidden");});
 
-function setup(){ $("spread").innerHTML="";spreads[system].forEach(s=>{let o=document.createElement("option");o.value=s[1];o.textContent=s[0];$("spread").append(o)});updateCount();}
+function setup(){ $("spread").innerHTML="";spreads[system].forEach(s=>{let o=document.createElement("option");o.value=s[1];o.textContent=s[0];$("spread").append(o)});updateCount();preloadDeckImages(system);}
 function updateCount(){let n=Number($("spread").value);$("count").innerHTML="";let o=document.createElement("option");o.value=n;o.textContent=n+" 張";$("count").append(o);}
 document.querySelectorAll(".system").forEach(b=>b.addEventListener("click",()=>{system=b.dataset.system;document.querySelectorAll(".system").forEach(x=>x.classList.toggle("active",x===b));$("result").classList.add("hidden");setup();}));
 $("spread").addEventListener("change",updateCount);
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function deck(){return system==="tarot"?tarot:system==="lenormand"?lenormand:runes;}
+const deckImagePreloadCache=new Map();
+function deckImageUrls(systemName){
+ if(systemName==="lenormand")return ["https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png/960px-Das_Spiel_der_Hofnung_%28The_Game_of_Hope%29.png"];
+ if(systemName!=="tarot")return [];
+ const suitFiles={"權杖":"Wands","聖杯":"Cups","寶劍":"Swords","錢幣":"Pents"};
+ const rankFiles={"Ace":"01","二":"02","三":"03","四":"04","五":"05","六":"06","七":"07","八":"08","九":"09","十":"10","侍者":"11","騎士":"12","皇后":"13","國王":"14"};
+ const urls=tarot.map(c=>{
+  if(TAROT_MAJOR_ART[c.name])return "https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(TAROT_MAJOR_ART[c.name]);
+  const parts=c.name.split("・");
+  const file=(suitFiles[parts[0]]||"Wands")+(rankFiles[parts[1]||"Ace"]||"01")+".jpg";
+  return "https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(file);
+ });
+ return [...new Set(urls)];
+}
+function preloadDeckImages(systemName){
+ const urls=deckImageUrls(systemName);
+ if(!urls.length||deckImagePreloadCache.has(systemName))return;
+ const state={loaded:0,total:urls.length,failed:0};
+ deckImagePreloadCache.set(systemName,state);
+ let next=0,active=0;
+ const pump=()=>{
+  while(active<4&&next<urls.length){
+   const img=new Image(),url=urls[next++];
+   active++;img.decoding="async";
+   img.onload=()=>{state.loaded++;active--;pump();};
+   img.onerror=()=>{state.failed++;active--;pump();};
+   img.src=url;
+  }
+ };
+ pump();
+}
+
 function makePrompt(){
  const systemNames={tarot:"塔羅牌（Tarot）",lenormand:"雷諾曼（Lenormand）",runes:"古弗薩克／北歐符文（Elder Futhark runes）"};
  const result=lastDraw.map((c,i)=>(i+1)+". 位置："+c.position+"｜牌／符文："+c.name+"（"+c.symbol+"）｜"+(system==="runes"?"抽取結果":"方向："+(c.reversed?"逆位":"正位"))+"｜網站提供的關鍵詞："+c.meaning).join("\n");
