@@ -523,6 +523,49 @@ body{top:0!important}
  .fan-card{flex-basis:53px;width:53px;height:84px;margin-left:0}
 }
 
+
+/* Frosted-glass light particles: soft, slow and subtly affected by scrolling */
+body{isolation:isolate;position:relative}
+body::before,body::after{content:"";position:fixed;inset:-12%;pointer-events:none;z-index:0;will-change:transform,opacity}
+body::before{
+ background:
+  radial-gradient( circle at 12% 24%, rgba(255,255,255,.34) 0, rgba(255,255,255,.13) 2px, transparent 17px),
+  radial-gradient( circle at 29% 72%, rgba(255,250,235,.26) 0, rgba(255,255,255,.09) 3px, transparent 23px),
+  radial-gradient( circle at 53% 18%, rgba(255,255,255,.30) 0, rgba(255,255,255,.10) 2px, transparent 19px),
+  radial-gradient( circle at 76% 38%, rgba(255,255,255,.28) 0, rgba(255,255,255,.10) 3px, transparent 22px),
+  radial-gradient( circle at 88% 78%, rgba(255,255,255,.24) 0, rgba(255,255,255,.08) 2px, transparent 18px),
+  radial-gradient( circle at 42% 92%, rgba(255,255,255,.20) 0, transparent 26px);
+ background-size:100% 100%;
+ filter:blur(9px);
+ opacity:.48;
+ transform:translate3d(0,var(--glass-shift,0px),0);
+ animation:glassParticles 13s ease-in-out infinite alternate;
+}
+body::after{
+ background:
+  radial-gradient(ellipse at 18% 35%,rgba(255,255,255,.075),transparent 28%),
+  radial-gradient(ellipse at 82% 62%,rgba(219,231,239,.065),transparent 30%),
+  radial-gradient(ellipse at 52% 8%,rgba(255,248,231,.045),transparent 24%);
+ filter:blur(30px);
+ opacity:.72;
+ transform:translate3d(0,calc(var(--glass-shift,0px)*.55),0);
+ animation:glassGlow 17s ease-in-out infinite alternate;
+}
+body>header,body>main,body>footer{position:relative;z-index:1}
+@keyframes glassParticles{
+ 0%{opacity:.28;filter:blur(11px)}
+ 45%{opacity:.52;filter:blur(8px)}
+ 100%{opacity:.36;filter:blur(13px)}
+}
+@keyframes glassGlow{
+ 0%{opacity:.42}
+ 50%{opacity:.78}
+ 100%{opacity:.55}
+}
+@media(prefers-reduced-motion:reduce){
+ body::before,body::after{animation:none}
+}
+
 </style>
 </head>
 <body>
@@ -865,6 +908,20 @@ $("siteLanguage").addEventListener("change",e=>setSiteLanguage(e.target.value));
  script.src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
  script.async=true;
  document.head.appendChild(script);
+})();
+
+/* Gentle parallax: light haze drifts slightly as the page scrolls */
+(function(){
+ let ticking=false;
+ window.addEventListener("scroll",function(){
+  if(ticking)return;
+  ticking=true;
+  requestAnimationFrame(function(){
+   const shift=-Math.min(window.scrollY*.035,42);
+   document.documentElement.style.setProperty("--glass-shift",shift+"px");
+   ticking=false;
+  });
+ },{passive:true});
 })();
 </script>
 </body>
